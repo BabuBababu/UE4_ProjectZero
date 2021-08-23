@@ -15,7 +15,6 @@ class APortfolioProjectCharacter : public ACharacter
 	/** Camera boom positioning the camera behind the character */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class USpringArmComponent* CameraBoom;
-
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
@@ -33,18 +32,19 @@ public:
 	UCameraComponent* Camera;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USceneComponent* WidgetScene;
-
+public:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float MouseSensitivity = 10.0; //마우스 감도
 protected:
 
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);
-	void TurnAtRate(float Rate);
-	void LookUpAtRate(float Rate);
-protected:
+	void Turn(float Rate);
+	void LookUp(float Rate);
+public:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	// End of APawn interface
 
 public:
 };
