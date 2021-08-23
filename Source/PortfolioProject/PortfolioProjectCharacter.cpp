@@ -4,7 +4,9 @@
 #include "HeadMountedDisplayFunctionLibrary.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/ArrowComponent.h"
 #include "Components/InputComponent.h"
+#include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Controller.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -14,12 +16,28 @@
 
 APortfolioProjectCharacter::APortfolioProjectCharacter()
 {
-	// Set size for collision capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	// 컴포넌트 초기화
+	RootComponent = GetCapsuleComponent();
+	
+	WeaponBack = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponBack"));
+	WeaponRight = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponRight"));
+	PlayerSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("PlayerSkeletalMesh"));
+	SpringArm= CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
+	Camera= CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
+	WidgetScene= CreateDefaultSubobject<USceneComponent>(TEXT("WidgetScene"));
 
-	// set our turn rates for input
-	BaseTurnRate = 45.f;
-	BaseLookUpRate = 45.f;
+	PlayerSkeletalMesh->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
+	WeaponBack->AttachToComponent(PlayerSkeletalMesh,FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("WeaponBack"));
+	WeaponRight->AttachToComponent(PlayerSkeletalMesh,FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("WeaponRight"));
+	SpringArm->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
+	
+	Camera->AttachToComponent(SpringArm,FAttachmentTransformRules::KeepWorldTransform);
+	WidgetScene->AttachToComponent(Camera,FAttachmentTransformRules::KeepWorldTransform);
+	// 콜리전 캡슐 사이즈 초기화
+	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
+	// set our turn rates for input 일단 주석처리
+	//BaseTurnRate = 45.f;
+	//BaseLookUpRate = 45.f;
 
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
@@ -32,19 +50,6 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	GetCharacterMovement()->JumpZVelocity = 600.f;
 	GetCharacterMovement()->AirControl = 0.2f;
 
-	// Create a camera boom (pulls in towards the player if there is a collision)
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(RootComponent);
-	CameraBoom->TargetArmLength = 300.0f; // The camera follows at this distance behind the character	
-	CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-
-	// Create a follow camera
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named MyCharacter (to avoid direct content references in C++)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -68,46 +73,19 @@ void APortfolioProjectCharacter::SetupPlayerInputComponent(class UInputComponent
 	PlayerInputComponent->BindAxis("LookUp", this, &APawn::AddControllerPitchInput);
 	PlayerInputComponent->BindAxis("LookUpRate", this, &APortfolioProjectCharacter::LookUpAtRate);
 
-	// handle touch devices
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &APortfolioProjectCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &APortfolioProjectCharacter::TouchStopped);
-
-	// VR headset functionality
-	PlayerInputComponent->BindAction("ResetVR", IE_Pressed, this, &APortfolioProjectCharacter::OnResetVR);
 }
 
-
-void APortfolioProjectCharacter::OnResetVR()
-{
-	// If PortfolioProject is added to a project via 'Add Feature' in the Unreal Editor the dependency on HeadMountedDisplay in PortfolioProject.Build.cs is not automatically propagated
-	// and a linker error will result.
-	// You will need to either:
-	//		Add "HeadMountedDisplay" to [YourProject].Build.cs PublicDependencyModuleNames in order to build successfully (appropriate if supporting VR).
-	// or:
-	//		Comment or delete the call to ResetOrientationAndPosition below (appropriate if not supporting VR)
-	UHeadMountedDisplayFunctionLibrary::ResetOrientationAndPosition();
-}
-
-void APortfolioProjectCharacter::TouchStarted(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		Jump();
-}
-
-void APortfolioProjectCharacter::TouchStopped(ETouchIndex::Type FingerIndex, FVector Location)
-{
-		StopJumping();
-}
 
 void APortfolioProjectCharacter::TurnAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
-	AddControllerYawInput(Rate * BaseTurnRate * GetWorld()->GetDeltaSeconds());
+	AddControllerYawInput(Rate);
 }
 
 void APortfolioProjectCharacter::LookUpAtRate(float Rate)
 {
 	// calculate delta for this frame from the rate information
-	AddControllerPitchInput(Rate * BaseLookUpRate * GetWorld()->GetDeltaSeconds());
+	AddControllerPitchInput(Rate);
 }
 
 void APortfolioProjectCharacter::MoveForward(float Value)
