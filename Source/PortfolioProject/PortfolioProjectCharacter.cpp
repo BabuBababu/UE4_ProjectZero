@@ -56,33 +56,89 @@ void APortfolioProjectCharacter::SetupPlayerInputComponent(class UInputComponent
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
-
-	PlayerInputComponent->BindAxis("MoveForward", this, &APortfolioProjectCharacter::MoveForward);
-	PlayerInputComponent->BindAxis("MoveRight", this, &APortfolioProjectCharacter::MoveRight);
-
-	// We have 2 versions of the rotation bindings to handle different kinds of devices differently
-	// "turn" handles devices that provide an absolute delta, such as a mouse.
-	// "turnrate" is for devices that we choose to treat as a rate of change, such as an analog joystick
-	PlayerInputComponent->BindAxis("Turn", this, &APortfolioProjectCharacter::Turn);
-	PlayerInputComponent->BindAxis("LookUp", this, &APortfolioProjectCharacter::LookUp);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Jump);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::EquipRifle);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::FAiming);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Fire);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Interact);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Reloading);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::SKillShot1);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Heal);
+	//아군 명령키
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::AttackForwad);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::FallBack);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::WaitHere);
+	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::FollowMe);
+	//이동 조작
+	PlayerInputComponent->BindAxis("MoveForward", this, &APortfolioProjectCharacter::FMoveForward);
+	PlayerInputComponent->BindAxis("MoveRight", this, &APortfolioProjectCharacter::FMoveRight);
+	PlayerInputComponent->BindAxis("Turn", this, &APortfolioProjectCharacter::FTurn);
+	PlayerInputComponent->BindAxis("LookUp", this, &APortfolioProjectCharacter::FLookUp);
 
 }
 
 
-void APortfolioProjectCharacter::Turn(float Rate)
+void APortfolioProjectCharacter::FTurn(float Rate)
 {
 	// calculate delta for this frame from the rate information, Rate옆에 상수값 곱해서 감도조절
 	AddControllerYawInput(Rate*MouseSensitivity* GetWorld()->GetDeltaSeconds());
 }
 
-void APortfolioProjectCharacter::LookUp(float Rate)
+void APortfolioProjectCharacter::FLookUp(float Rate)
 {
 	// calculate delta for this frame from the rate information
 	AddControllerPitchInput(Rate*MouseSensitivity* GetWorld()->GetDeltaSeconds());
 }
 
-void APortfolioProjectCharacter::MoveForward(float Value)
+void APortfolioProjectCharacter::EquipRifle()
+{
+}
+
+void APortfolioProjectCharacter::FAiming()
+{
+}
+
+void APortfolioProjectCharacter::Fire()
+{
+}
+
+void APortfolioProjectCharacter::Interact()
+{
+}
+
+void APortfolioProjectCharacter::Reloading()
+{
+}
+
+void APortfolioProjectCharacter::SKillShot1()
+{
+}
+
+void APortfolioProjectCharacter::Heal()
+{
+}
+
+void APortfolioProjectCharacter::FollowMe()
+{
+}
+
+void APortfolioProjectCharacter::AttackForwad()
+{
+}
+
+void APortfolioProjectCharacter::WaitHere()
+{
+}
+
+void APortfolioProjectCharacter::FallBack()
+{
+}
+
+void APortfolioProjectCharacter::ESCMenu()
+{
+}
+
+void APortfolioProjectCharacter::FMoveForward(float Value)
 {
 	if ((Controller != nullptr) && (Value != 0.0f))
 	{
@@ -96,7 +152,7 @@ void APortfolioProjectCharacter::MoveForward(float Value)
 	}
 }
 
-void APortfolioProjectCharacter::MoveRight(float Value)
+void APortfolioProjectCharacter::FMoveRight(float Value)
 {
 	if ( (Controller != nullptr) && (Value != 0.0f) )
 	{
