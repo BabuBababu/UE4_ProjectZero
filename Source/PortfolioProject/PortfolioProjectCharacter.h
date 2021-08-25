@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/WidgetComponent.h"
 #include "GameFramework/Character.h"
 #include "PortfolioProjectCharacter.generated.h"
 
@@ -32,14 +33,22 @@ public:
 	UCameraComponent* Camera;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USceneComponent* WidgetScene;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UWidgetComponent* HUDWidget;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	UWidgetComponent* OrderWidget;
+
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float MouseSensitivity = 10.0; //마우스 감도
 protected:
+	virtual void BeginPlay() override;
 	void FMoveForward(float Value);
 	void FMoveRight(float Value);
 	void FTurn(float Rate);
 	void FLookUp(float Rate);
+
+	void UpdateHealth();
 	void EquipRifle();
 	void FAiming();
 	void Fire();
@@ -128,10 +137,42 @@ public:
 	
 
 public:
-	
+	//플레이어 위젯클래스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UUserWidget> CrossHairWidget;
+	TSubclassOf<class UUserWidget> CrossHairWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UUserWidget> MissionFailWidget;
+	TSubclassOf<class UUserWidget> MissionFailWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UUserWidget> EscMenuWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UUserWidget> HurtWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UUserWidget> HUD_Player_UIWidgetClass;
+	//동료 위젯클래스
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UUserWidget> G36CWidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UUserWidget> RO635WidgetClass;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UUserWidget> CommanderWidgetClass;
+
+	//플레이어 인스턴스
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* CrossHairUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* MissionFailUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* EscMenuUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* HurtUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* HUD_Player_UI;
+	//동료 인스턴스
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* G36CUI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* RO635UI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UUserWidget* CommanderUI;
 };
 
