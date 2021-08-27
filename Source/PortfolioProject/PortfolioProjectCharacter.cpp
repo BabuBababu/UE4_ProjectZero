@@ -32,17 +32,21 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	HUDWidget = CreateDefaultSubobject<UWidgetComponent>(TEXT("HUDWidget"));
 	OrderWidget= CreateDefaultSubobject<UWidgetComponent>(TEXT("OrderWidget"));
 
-	PlayerSkeletalMesh->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
+	PlayerSkeletalMesh->SetupAttachment(RootComponent);
 	//WeaponBack->AttachToComponent(PlayerSkeletalMesh,FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("WeaponBack"));
 	//WeaponRight->AttachToComponent(PlayerSkeletalMesh,FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("WeaponRight"));
 	WeaponBack->SetupAttachment(PlayerSkeletalMesh,TEXT("WeaponBack"));
 	WeaponRight->SetupAttachment(PlayerSkeletalMesh,TEXT("WeaponRight"));
-	SpringArm->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
+	SpringArm->SetupAttachment(RootComponent);
+	Camera->SetupAttachment(SpringArm);
+	WidgetScene->SetupAttachment(Camera);
+	HUDWidget->SetupAttachment(RootComponent);
+	OrderWidget->SetupAttachment(RootComponent);
 	
-	Camera->AttachToComponent(SpringArm,FAttachmentTransformRules::KeepWorldTransform);
-	WidgetScene->AttachToComponent(Camera,FAttachmentTransformRules::KeepWorldTransform);
-	HUDWidget->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
-	OrderWidget->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
+	//Camera->AttachToComponent(SpringArm,FAttachmentTransformRules::KeepWorldTransform);
+	//WidgetScene->AttachToComponent(Camera,FAttachmentTransformRules::KeepWorldTransform);
+	//HUDWidget->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
+	//OrderWidget->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
 	
 	// 콜리전 캡슐 사이즈 초기화
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
