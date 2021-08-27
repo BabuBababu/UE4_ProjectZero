@@ -33,8 +33,10 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	OrderWidget= CreateDefaultSubobject<UWidgetComponent>(TEXT("OrderWidget"));
 
 	PlayerSkeletalMesh->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
-	WeaponBack->AttachToComponent(PlayerSkeletalMesh,FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("WeaponBack"));
-	WeaponRight->AttachToComponent(PlayerSkeletalMesh,FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("WeaponRight"));
+	//WeaponBack->AttachToComponent(PlayerSkeletalMesh,FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("WeaponBack"));
+	//WeaponRight->AttachToComponent(PlayerSkeletalMesh,FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("WeaponRight"));
+	WeaponBack->SetupAttachment(PlayerSkeletalMesh,TEXT("WeaponBack"));
+	WeaponRight->SetupAttachment(PlayerSkeletalMesh,TEXT("WeaponRight"));
 	SpringArm->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
 	
 	Camera->AttachToComponent(SpringArm,FAttachmentTransformRules::KeepWorldTransform);
