@@ -38,6 +38,9 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	UWidgetComponent* OrderWidget;
 
+	FTimerHandle SkillTimer;
+	FTimerHandle SkillTimer4;
+
 public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float MouseSensitivity = 10.0; //마우스 감도
@@ -61,6 +64,9 @@ protected:
 	void WaitHere();
 	void FallBack();
 	void ESCMenu();
+
+	void SetSkill1Time();
+	void SetSkill4Time();
 public:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -86,27 +92,27 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int ReloadingAmmo;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool IsDead;
+	bool IsDead = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool IsHurted;
+	bool IsHurted = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int ComboSound10;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool IsActingSkill;
+	bool IsActingSkill = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Skill1Time;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Skill4Time;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool SelectedRO635;
+	bool SelectedRO635 = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool SelectedG36C;
+	bool SelectedG36C= false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool ForEnemySendG36CIsDead;
+	bool ForEnemySendG36CIsDead= false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool ForEnemySendRO635IsDead;
+	bool ForEnemySendRO635IsDead= false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool ForEnemySendCommanderIsDead;
+	bool ForEnemySendCommanderIsDead= false;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ForPlayerG36CCurrentHP;
@@ -121,11 +127,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ForPlayerCommanderMaxHP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool OrderFollow;
+	bool OrderFollow= false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Stage2ObjectCount;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool OpenedESC;
+	bool OpenedESC= false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector ForEnemySendG36CLocation;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -174,5 +180,9 @@ public:
 	UUserWidget* RO635UI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UUserWidget* CommanderUI;
+
+	//플레이어 메쉬
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UStaticMesh* WA2000Class;
 };
 

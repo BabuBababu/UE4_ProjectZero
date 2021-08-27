@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/WidgetComponent.h"
+#include "TimerManager.h"
 #include "GameFramework/Controller.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
@@ -86,6 +87,9 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	RO635WidgetClass = RO635Add.Class;
 	static ConstructorHelpers::FClassFinder<UUserWidget> CommanderAdd(TEXT("/Game/Movable/Charactor/HUD/BP_Widget_Commander"));
 	CommanderWidgetClass = CommanderAdd.Class;
+	
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> WA2000Gun(TEXT("/Game/Movable/WeaponAsset/WA2000Gun/WA2000_GUN.WA2000_GUN"));
+	WA2000Class = WA2000Gun.Object;
 }
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -97,18 +101,18 @@ void APortfolioProjectCharacter::SetupPlayerInputComponent(class UInputComponent
 	// Set up gameplay key bindings
 	check(PlayerInputComponent);
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Jump);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::EquipRifle);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::FAiming);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Fire);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Interact);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Reloading);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::SKillShot1);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Heal);
+	PlayerInputComponent->BindAction("EquipRifle", IE_Pressed, this, &APortfolioProjectCharacter::EquipRifle);
+	PlayerInputComponent->BindAction("Aiming", IE_Pressed, this, &APortfolioProjectCharacter::FAiming);
+	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APortfolioProjectCharacter::Fire);
+	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APortfolioProjectCharacter::Interact);
+	PlayerInputComponent->BindAction("Reloading", IE_Pressed, this, &APortfolioProjectCharacter::Reloading);
+	PlayerInputComponent->BindAction("SKillShot1", IE_Pressed, this, &APortfolioProjectCharacter::SKillShot1);
+	PlayerInputComponent->BindAction("Heal", IE_Pressed, this, &APortfolioProjectCharacter::Heal);
 	//아군 명령키
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::AttackForwad);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::FallBack);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::WaitHere);
-	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::FollowMe);
+	PlayerInputComponent->BindAction("AttackForwad", IE_Pressed, this, &APortfolioProjectCharacter::AttackForwad);
+	PlayerInputComponent->BindAction("FallBack", IE_Pressed, this, &APortfolioProjectCharacter::FallBack);
+	PlayerInputComponent->BindAction("WaitHere", IE_Pressed, this, &APortfolioProjectCharacter::WaitHere);
+	PlayerInputComponent->BindAction("FollowMe", IE_Pressed, this, &APortfolioProjectCharacter::FollowMe);
 	//이동 조작
 	PlayerInputComponent->BindAxis("MoveForward", this, &APortfolioProjectCharacter::FMoveForward);
 	PlayerInputComponent->BindAxis("MoveRight", this, &APortfolioProjectCharacter::FMoveRight);
@@ -123,7 +127,8 @@ void APortfolioProjectCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	APlayerController* const PlayerController = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
-
+	FString CurrentLevelName = GetWorld()->GetMapName();
+	
 	CurrentHP = MaxHP;
 	Skill1Time = 0;
 	Skill4Time = 0;
@@ -185,6 +190,23 @@ void APortfolioProjectCharacter::BeginPlay()
 
 	HUDWidget->SetWidgetSpace(EWidgetSpace::Screen);
 	UpdateHealth();
+	
+	GetWorld()->GetTimerManager().SetTimer(SkillTimer,this,&APortfolioProjectCharacter::SetSkill1Time,1.0f,true);
+	GetWorld()->GetTimerManager().SetTimer(SkillTimer4,this,&APortfolioProjectCharacter::SetSkill4Time,1.0f,true);
+
+	if (CurrentLevelName != "LobbyBase")
+	{
+		G36CUI->SetVisibility(ESlateVisibility::Visible);
+		RO635UI->SetVisibility(ESlateVisibility::Visible);
+		CommanderUI->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		G36CUI->SetVisibility(ESlateVisibility::Hidden);
+		RO635UI->SetVisibility(ESlateVisibility::Hidden);
+		CommanderUI->SetVisibility(ESlateVisibility::Hidden);
+	}
+
 }
 
 
@@ -217,6 +239,25 @@ void APortfolioProjectCharacter::UpdateHealth()
 
 void APortfolioProjectCharacter::EquipRifle()
 {
+	//UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(this->GetCharacterMovement());
+	if(RifleEquipped)
+	{
+		RifleEquipped = false;
+		GetCharacterMovement()->MaxWalkSpeed= 300.f;;
+		GetCharacterMovement()->MaxWalkSpeedCrouched= 100.f;
+		WeaponBack->SetStaticMesh(WA2000Class);
+		WeaponRight->SetStaticMesh(nullptr);
+		
+		
+	}
+	else
+	{
+		RifleEquipped = true;
+		GetCharacterMovement()->MaxWalkSpeed= 600.f;
+		GetCharacterMovement()->MaxWalkSpeedCrouched= 200.f;
+		WeaponBack->SetStaticMesh(nullptr);
+		WeaponRight->SetStaticMesh(WA2000Class);
+	}
 }
 
 void APortfolioProjectCharacter::FAiming()
@@ -238,7 +279,6 @@ void APortfolioProjectCharacter::Reloading()
 void APortfolioProjectCharacter::SKillShot1()
 {
 }
-
 void APortfolioProjectCharacter::Heal()
 {
 }
@@ -263,32 +303,50 @@ void APortfolioProjectCharacter::ESCMenu()
 {
 }
 
+void APortfolioProjectCharacter::SetSkill1Time()
+{
+	Skill1Time = FMath::Clamp(Skill1Time-1.0f,0.f,1.f);
+}
+
+void APortfolioProjectCharacter::SetSkill4Time()
+{
+	Skill4Time = FMath::Clamp(Skill1Time-1.0f,0.f,1.f);
+}
+
 
 void APortfolioProjectCharacter::FMoveForward(float Value)
 {
-	if ((Controller != nullptr) && (Value != 0.0f))
+	if(!IsActingSkill)
 	{
-		// find out which way is forward
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		MoveForward = Value;
+		if ((Controller != nullptr) && (MoveForward != 0.0f))
+		{
+			// find out which way is forward
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-		AddMovementInput(Direction, Value);
+			// get forward vector
+			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+			AddMovementInput(Direction, MoveForward);
+		}
 	}
 }
 
 void APortfolioProjectCharacter::FMoveRight(float Value)
 {
-	if ( (Controller != nullptr) && (Value != 0.0f) )
+	if(!IsActingSkill)
 	{
-		// find out which way is right
-		const FRotator Rotation = Controller->GetControlRotation();
-		const FRotator YawRotation(0, Rotation.Yaw, 0);
+		MoveRight = Value;
+		if ( (Controller != nullptr) && (MoveRight != 0.0f) )
+		{
+			// find out which way is right
+			const FRotator Rotation = Controller->GetControlRotation();
+			const FRotator YawRotation(0, Rotation.Yaw, 0);
 	
-		// get right vector 
-		const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-		// add movement in that direction
-		AddMovementInput(Direction, Value);
+			// get right vector 
+			const FVector Direction = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+			// add movement in that direction
+			AddMovementInput(Direction, MoveRight);
+		}
 	}
 }
