@@ -9,6 +9,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Camera/PlayerCameraManager.h"
+#include "Components/TimelineComponent.h"
 #include "TimerManager.h"
 #include "GameFramework/Controller.h"
 #include "UObject/ConstructorHelpers.h"
@@ -103,6 +105,7 @@ void APortfolioProjectCharacter::SetupPlayerInputComponent(class UInputComponent
 	PlayerInputComponent->BindAction("Jump", IE_Pressed, this, &APortfolioProjectCharacter::Jump);
 	PlayerInputComponent->BindAction("EquipRifle", IE_Pressed, this, &APortfolioProjectCharacter::EquipRifle);
 	PlayerInputComponent->BindAction("Aiming", IE_Pressed, this, &APortfolioProjectCharacter::FAiming);
+	PlayerInputComponent->BindAction("Aiming", IE_Released, this, &APortfolioProjectCharacter::FAimingOff);
 	PlayerInputComponent->BindAction("Fire", IE_Pressed, this, &APortfolioProjectCharacter::Fire);
 	PlayerInputComponent->BindAction("Interact", IE_Pressed, this, &APortfolioProjectCharacter::Interact);
 	PlayerInputComponent->BindAction("Reloading", IE_Pressed, this, &APortfolioProjectCharacter::Reloading);
@@ -121,6 +124,11 @@ void APortfolioProjectCharacter::SetupPlayerInputComponent(class UInputComponent
 
 }
 
+void APortfolioProjectCharacter::FOVTimelineProgress(float value)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Function"));
+	Camera->SetFieldOfView(value);
+}
 
 
 void APortfolioProjectCharacter::BeginPlay()
@@ -176,9 +184,8 @@ void APortfolioProjectCharacter::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("sucess commanderwiget"));
 	}
 	
-	CrossHairUI->AddToViewport(10);
 	EscMenuUI->AddToViewport();
-	MissionFailUI->AddToViewport();
+	MissionFailUI->AddToViewport(10);
 	HurtUI->AddToViewport();
 	G36CUI->AddToViewport();
 	RO635UI->AddToViewport();
@@ -207,6 +214,12 @@ void APortfolioProjectCharacter::BeginPlay()
 		CommanderUI->SetVisibility(ESlateVisibility::Hidden);
 	}
 
+}
+
+void APortfolioProjectCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+	CameraCurveTimeline.TickTimeline(DeltaSeconds);
 }
 
 
@@ -243,7 +256,7 @@ void APortfolioProjectCharacter::EquipRifle()
 	if(RifleEquipped)
 	{
 		RifleEquipped = false;
-		GetCharacterMovement()->MaxWalkSpeed= 300.f;;
+		GetCharacterMovement()->MaxWalkSpeed= 300.f;
 		GetCharacterMovement()->MaxWalkSpeedCrouched= 100.f;
 		WeaponBack->SetStaticMesh(WA2000Class);
 		WeaponRight->SetStaticMesh(nullptr);
@@ -262,6 +275,44 @@ void APortfolioProjectCharacter::EquipRifle()
 
 void APortfolioProjectCharacter::FAiming()
 {
+	if(RifleEquipped)
+	{
+		Aiming = true;
+		GetCharacterMovement()->MaxWalkSpeed= 300.f;
+		GetCharacterMovement()->MaxWalkSpeedCrouched= 100.f;
+		CrossHairUI->AddToViewport();
+		//FOV
+		if(CameraCurveFloat)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("FOVTest"));
+			FOnTimelineFloat TimelineProgress;
+			TimelineProgress.BindUFunction(this,FName("FOVTimelineProgress"));
+			CameraCurveTimeline.AddInterpFloat(CameraCurveFloat,TimelineProgress);
+			CameraCurveTimeline.PlayFromStart();
+			//CameraCurveTimeline.SetLooping(false);
+		}
+	}
+}
+
+void APortfolioProjectCharacter::FAimingOff()
+{
+	if(RifleEquipped)
+	{
+		Aiming = false;
+		ComboSound10 = 0;
+		GetCharacterMovement()->MaxWalkSpeed= 600.f;
+		GetCharacterMovement()->MaxWalkSpeedCrouched= 200.f;
+		CrossHairUI->RemoveFromParent();
+		//FOV
+		if(CameraCurveFloat)
+		{
+			FOnTimelineFloat TimelineProgress;
+			TimelineProgress.BindUFunction(this,FName("FOVTimelineProgress"));
+			CameraCurveTimeline.AddInterpFloat(CameraCurveFloat,TimelineProgress);
+			CameraCurveTimeline.Reverse();
+			//CameraCurveTimeline.SetLooping(false);
+		}
+	}
 }
 
 void APortfolioProjectCharacter::Fire()

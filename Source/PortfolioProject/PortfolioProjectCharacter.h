@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/WidgetComponent.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
 #include "PortfolioProjectCharacter.generated.h"
+
+class UCurveFloat;
 
 
 UCLASS(config=Game)
@@ -19,6 +22,7 @@ class APortfolioProjectCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	class UCameraComponent* FollowCamera;
+	
 public:
 	APortfolioProjectCharacter();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Mesh)
@@ -46,6 +50,7 @@ public:
 	float MouseSensitivity = 10.0; //마우스 감도
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaSeconds) override;
 	void FMoveForward(float Value);
 	void FMoveRight(float Value);
 	void FTurn(float Rate);
@@ -54,6 +59,7 @@ protected:
 	void UpdateHealth();
 	void EquipRifle();
 	void FAiming();
+	void FAimingOff();
 	void Fire();
 	void Interact();
 	void Reloading();
@@ -138,8 +144,11 @@ public:
 	FVector ForEnemySendRO635Location;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FVector ForEnemySendCommanderLocation;
-	
-	
+
+	//카메라 FOV용타임라인
+	FTimeline CameraCurveTimeline;
+	UPROPERTY(EditAnywhere,Category="Timeline")
+	UCurveFloat* CameraCurveFloat;
 	
 
 public:
@@ -184,5 +193,9 @@ public:
 	//플레이어 메쉬
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UStaticMesh* WA2000Class;
+public:
+	//FOV타임라인용 함수
+	UFUNCTION()
+	void FOVTimelineProgress(float value);
 };
 
