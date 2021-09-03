@@ -9,6 +9,7 @@
 #include "PortfolioProjectCharacter.generated.h"
 
 class UCurveFloat;
+class UAnimMontage;
 
 
 UCLASS(config=Game)
@@ -149,6 +150,14 @@ public:
 	FTimeline CameraCurveTimeline;
 	UPROPERTY(EditAnywhere,Category="Timeline")
 	UCurveFloat* CameraCurveFloat;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* FireMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* ReloadingMontage;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UAnimMontage* Skill1Montage;
+	
 	
 
 public:

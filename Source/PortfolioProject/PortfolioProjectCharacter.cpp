@@ -10,6 +10,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Camera/PlayerCameraManager.h"
+#include "Animation/AnimMontage.h"
 #include "Components/TimelineComponent.h"
 #include "TimerManager.h"
 #include "GameFramework/Controller.h"
@@ -46,10 +47,6 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	HUDWidget->SetupAttachment(RootComponent);
 	OrderWidget->SetupAttachment(RootComponent);
 	
-	//Camera->AttachToComponent(SpringArm,FAttachmentTransformRules::KeepWorldTransform);
-	//WidgetScene->AttachToComponent(Camera,FAttachmentTransformRules::KeepWorldTransform);
-	//HUDWidget->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
-	//OrderWidget->AttachToComponent(RootComponent,FAttachmentTransformRules::KeepWorldTransform);
 	
 	// 콜리전 캡슐 사이즈 초기화
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
@@ -92,6 +89,11 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> WA2000Gun(TEXT("/Game/Movable/WeaponAsset/WA2000Gun/WA2000_GUN.WA2000_GUN"));
 	WA2000Class = WA2000Gun.Object;
+
+	//WA2000 몽타쥬
+	FireMontage = ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("/Game/Movable/CharactorAsset/Wa2000/WA2000_Animation/firing_rifle_Montage")).Object;
+	ReloadingMontage = ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("/Game/Movable/CharactorAsset/Wa2000/WA2000_Animation/Reloading_Montage")).Object;
+	Skill1Montage = ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("/Game/Movable/CharactorAsset/Wa2000/WA2000_Animation/Fire_Skill_Montage")).Object;
 }
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -317,6 +319,27 @@ void APortfolioProjectCharacter::FAimingOff()
 
 void APortfolioProjectCharacter::Fire()
 {
+	UAnimInstance* AnimInstance =PlayerSkeletalMesh->GetAnimInstance();
+	UUserWidget* Hudwidget = HUDWidget->GetUserWidgetObject();
+	UFunction *AmmoRedFlashFunc = dynamic_cast<UFunction *>(Hudwidget->GetWidgetFromName(FName("Ammo red flash (No Ammo)")));
+		
+	if(RifleEquipped)
+	{
+		if(CurrentAmmo>0)
+		{
+			if(!AnimInstance->Montage_IsPlaying(ReloadingMontage))
+			{
+				AnimInstance->Montage_Play(FireMontage);
+			}
+		}
+		else
+		{
+			if(AmmoRedFlashFunc == nullptr)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("YesNoneFunction"));
+			}
+		}
+	}
 }
 
 void APortfolioProjectCharacter::Interact()
