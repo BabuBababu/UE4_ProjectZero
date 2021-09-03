@@ -376,10 +376,20 @@ void APortfolioProjectCharacter::Fire()
 
 void APortfolioProjectCharacter::Interact()
 {
+	//나중에
 }
 
 void APortfolioProjectCharacter::Reloading()
 {
+	UAnimInstance* AnimInstance =PlayerSkeletalMesh->GetAnimInstance();
+	if(CurrentAmmo<15)
+	{
+		AnimInstance->Montage_Play(ReloadingMontage);
+		UGameplayStatics::PlaySoundAtLocation(this,ReloadingSound,GetActorLocation());
+		ReloadingAmmo = 15-CurrentAmmo;
+		CurrentAmmo = ReloadingAmmo + CurrentAmmo;
+		SaveAmmo = SaveAmmo - ReloadingAmmo;
+	}
 }
 
 void APortfolioProjectCharacter::SKillShot1()
