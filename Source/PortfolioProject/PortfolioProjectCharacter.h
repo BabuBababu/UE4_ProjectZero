@@ -10,7 +10,9 @@
 
 class UCurveFloat;
 class UAnimMontage;
-
+class USoundBase;
+class UMatineeCameraShake;
+class UParticleSystem;
 
 UCLASS(config=Game)
 class APortfolioProjectCharacter : public ACharacter
@@ -74,6 +76,8 @@ protected:
 
 	void SetSkill1Time();
 	void SetSkill4Time();
+	
+	
 public:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -150,15 +154,21 @@ public:
 	FTimeline CameraCurveTimeline;
 	UPROPERTY(EditAnywhere,Category="Timeline")
 	UCurveFloat* CameraCurveFloat;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* FireMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* ReloadingMontage;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UAnimMontage* Skill1Montage;
-	
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* AttackVoiceSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* ReloadingSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* FireSound;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	USoundBase* Skill1Sound;
 
 public:
 	//플레이어 위젯클래스
@@ -179,6 +189,20 @@ public:
 	TSubclassOf<class UUserWidget> RO635WidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UUserWidget> CommanderWidgetClass;
+	
+	//카메라 쉐이크
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<UMatineeCameraShake> CameraShake;
+
+	//파티클 시스템
+	UPROPERTY(EditAnywhere,Category="Shot Particle Effect")
+	UParticleSystem* OnShoot_Particle;
+	UPROPERTY(EditAnywhere,Category="Skill1 Particle Effects")
+	UParticleSystem* Skill1_1_Particle;
+	UPROPERTY(EditAnywhere,Category="Skill1 Particle Effects")
+	UParticleSystem* Skill1_2_Particle;
+	UPROPERTY(EditAnywhere,Category="Skill4 Particle Effects")
+	UParticleSystem* Heal_Particle;
 
 	//플레이어 인스턴스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -206,5 +230,8 @@ public:
 	//FOV타임라인용 함수
 	UFUNCTION()
 	void FOVTimelineProgress(float value);
+	//커스텀 이벤트
+	UFUNCTION(BlueprintCallable)
+	void OnShoot();
 };
 

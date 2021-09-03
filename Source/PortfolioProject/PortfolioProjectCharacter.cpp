@@ -11,8 +11,11 @@
 #include "Components/WidgetComponent.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Animation/AnimMontage.h"
+#include "Engine/Classes/Kismet/GameplayStatics.h"
 #include "Components/TimelineComponent.h"
 #include "TimerManager.h"
+#include "particles/ParticleSystem.h"
+#include "MyPlayerController.h"
 #include "GameFramework/Controller.h"
 #include "UObject/ConstructorHelpers.h"
 #include "Blueprint/UserWidget.h"
@@ -90,10 +93,26 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> WA2000Gun(TEXT("/Game/Movable/WeaponAsset/WA2000Gun/WA2000_GUN.WA2000_GUN"));
 	WA2000Class = WA2000Gun.Object;
 
-	//WA2000 몽타쥬
+	//WA2000 몽타주
 	FireMontage = ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("/Game/Movable/CharactorAsset/Wa2000/WA2000_Animation/firing_rifle_Montage")).Object;
 	ReloadingMontage = ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("/Game/Movable/CharactorAsset/Wa2000/WA2000_Animation/Reloading_Montage")).Object;
 	Skill1Montage = ConstructorHelpers::FObjectFinder<UAnimMontage>(TEXT("/Game/Movable/CharactorAsset/Wa2000/WA2000_Animation/Fire_Skill_Montage")).Object;
+
+	//WA2000 사운드
+	AttackVoiceSound = ConstructorHelpers::FObjectFinder<USoundBase>(TEXT("/Game/Movable/CharactorAsset/Wa2000/WA2000_Sound/WA2000_ATTACK_JP_Cue")).Object;
+	ReloadingSound = ConstructorHelpers::FObjectFinder<USoundBase>(TEXT("/Game/Movable/GameAsset/Sound/MP7_Reload_Cue")).Object;
+	FireSound = ConstructorHelpers::FObjectFinder<USoundBase>(TEXT("/Game/Movable/WeaponAsset/ArbitraryStudio/Weapons/rifle_sound_Cue")).Object;
+	Skill1Sound = ConstructorHelpers::FObjectFinder<USoundBase>(TEXT("/Game/Movable/CharactorAsset/Wa2000/WA2000_Sound/WA2000_SKILL_JP_Cue")).Object;
+
+	//파티클 시스템 , character클래스에 category=particle 이런식으로 추가하고 변수 받는것이 확장성에 좋음 이 밑의 코드는 default로 미리 지정해놓은 에셋들.
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> OnShoot_ParticleAdd(TEXT("/Game/Movable/WeaponAsset/WeaponEffects/P_AssaultRifle_MF"));
+	OnShoot_Particle = OnShoot_ParticleAdd.Object;
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Skill1_1_ParticleAdd(TEXT("/Game/Movable/WeaponAsset/WeaponEffects/P_AssaultRifle_IH_2"));
+	Skill1_1_Particle =Skill1_1_ParticleAdd.Object;
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Skill1_2_ParticleAdd(TEXT("/Game/Movable/WeaponAsset/WeaponEffects/P_AssaultRifle_MF_2"));
+	Skill1_2_Particle = Skill1_2_ParticleAdd.Object;
+	static ConstructorHelpers::FObjectFinder<UParticleSystem> Heal_ParticleAdd(TEXT("/Game/StarterContent/Particles/P_Sparks.P_Sparks"));
+	Heal_Particle = Heal_ParticleAdd.Object;
 }
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -322,7 +341,8 @@ void APortfolioProjectCharacter::Fire()
 	UAnimInstance* AnimInstance =PlayerSkeletalMesh->GetAnimInstance();
 	UUserWidget* Hudwidget = HUDWidget->GetUserWidgetObject();
 	UFunction *AmmoRedFlashFunc = dynamic_cast<UFunction *>(Hudwidget->GetWidgetFromName(FName("Ammo red flash (No Ammo)")));
-		
+	//AMyPlayerController* const PlayerController = Cast<AMyPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
+	
 	if(RifleEquipped)
 	{
 		if(CurrentAmmo>0)
@@ -330,13 +350,25 @@ void APortfolioProjectCharacter::Fire()
 			if(!AnimInstance->Montage_IsPlaying(ReloadingMontage))
 			{
 				AnimInstance->Montage_Play(FireMontage);
+				CurrentAmmo = CurrentAmmo-1;
+				if(Aiming)
+				{
+					ComboSound10 = ComboSound10+1;
+					if(ComboSound10 >= 10 && FMath::RandRange(0,1))
+					{
+						UE_LOG(LogTemp, Warning, TEXT("sound"));
+						UGameplayStatics::PlaySoundAtLocation(this,AttackVoiceSound,AActor::GetActorLocation());
+						ComboSound10 = 0;
+					}
+				}
+				
 			}
 		}
 		else
 		{
 			if(AmmoRedFlashFunc == nullptr)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("YesNoneFunction"));
+				UE_LOG(LogTemp, Warning, TEXT("YesNoneFlashFunction"));
 			}
 		}
 	}
@@ -385,6 +417,18 @@ void APortfolioProjectCharacter::SetSkill1Time()
 void APortfolioProjectCharacter::SetSkill4Time()
 {
 	Skill4Time = FMath::Clamp(Skill1Time-1.0f,0.f,1.f);
+}
+
+void APortfolioProjectCharacter::OnShoot()
+{
+	
+	//AMyPlayerController* const PlayerController = Cast<AMyPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
+	
+	//UE_LOG(LogTemp, Warning, TEXT("YesPArticle"));
+
+	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(CameraShake, 1.0f,ECameraShakePlaySpace::CameraLocal,FRotator::ZeroRotator);
+	UGameplayStatics::SpawnEmitterAttached(OnShoot_Particle,WeaponRight,FName("Muzzle"),FVector(0.f,0.f,0.f), FRotator(0.f,0.f,0.f),FVector(1), EAttachLocation::SnapToTarget,true,EPSCPoolMethod::None,true);
+	UGameplayStatics::PlaySoundAtLocation(this,FireSound,GetActorLocation());
 }
 
 
