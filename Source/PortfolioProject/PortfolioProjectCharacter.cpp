@@ -15,6 +15,7 @@
 #include "Components/TimelineComponent.h"
 #include "TimerManager.h"
 #include "particles/ParticleSystem.h"
+#include "PlayerUIWidget.h"
 #include "MyPlayerController.h"
 #include "GameFramework/Controller.h"
 #include "UObject/ConstructorHelpers.h"
@@ -147,7 +148,7 @@ void APortfolioProjectCharacter::SetupPlayerInputComponent(class UInputComponent
 
 void APortfolioProjectCharacter::FOVTimelineProgress(float value)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Function"));
+	//UE_LOG(LogTemp, Warning, TEXT("Function"));
 	Camera->SetFieldOfView(value);
 }
 
@@ -157,6 +158,7 @@ void APortfolioProjectCharacter::BeginPlay()
 	Super::BeginPlay();
 	APlayerController* const PlayerController = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 	FString CurrentLevelName = GetWorld()->GetMapName();
+	
 	
 	CurrentHP = MaxHP;
 	Skill1Time = 0;
@@ -241,6 +243,11 @@ void APortfolioProjectCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	CameraCurveTimeline.TickTimeline(DeltaSeconds);
+	UAnimInstance* AnimInstance =PlayerSkeletalMesh->GetAnimInstance();
+	if(ReloadNow==true && !AnimInstance->Montage_IsPlaying(ReloadingMontage))
+	{
+		ReloadNow = false;
+	}
 }
 
 
@@ -276,11 +283,14 @@ void APortfolioProjectCharacter::EquipRifle()
 	//UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(this->GetCharacterMovement());
 	if(RifleEquipped)
 	{
-		RifleEquipped = false;
-		GetCharacterMovement()->MaxWalkSpeed= 300.f;
-		GetCharacterMovement()->MaxWalkSpeedCrouched= 100.f;
-		WeaponBack->SetStaticMesh(WA2000Class);
-		WeaponRight->SetStaticMesh(nullptr);
+		if(!ReloadNow)
+		{
+			RifleEquipped = false;
+			GetCharacterMovement()->MaxWalkSpeed= 300.f;
+			GetCharacterMovement()->MaxWalkSpeedCrouched= 100.f;
+			WeaponBack->SetStaticMesh(WA2000Class);
+			WeaponRight->SetStaticMesh(nullptr);
+		}
 		
 		
 	}
@@ -340,7 +350,10 @@ void APortfolioProjectCharacter::Fire()
 {
 	UAnimInstance* AnimInstance =PlayerSkeletalMesh->GetAnimInstance();
 	UUserWidget* Hudwidget = HUDWidget->GetUserWidgetObject();
-	UFunction *AmmoRedFlashFunc = dynamic_cast<UFunction *>(Hudwidget->GetWidgetFromName(FName("Ammo red flash (No Ammo)")));
+	UPlayerUIWidget* Hudwidgetcasted = Cast<UPlayerUIWidget>(Hudwidget);
+	UWidgetBlueprintGeneratedClass* WidgetAnim = Cast<UWidgetBlueprintGeneratedClass>(GetClass());
+		
+	//UFunction *AmmoRedFlashFunc = dynamic_cast<UFunction *>(Hudwidget->GetWidgetFromName(FName("Ammo red flash")));
 	//AMyPlayerController* const PlayerController = Cast<AMyPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 	
 	if(RifleEquipped)
@@ -349,6 +362,7 @@ void APortfolioProjectCharacter::Fire()
 		{
 			if(!AnimInstance->Montage_IsPlaying(ReloadingMontage))
 			{
+				
 				AnimInstance->Montage_Play(FireMontage);
 				CurrentAmmo = CurrentAmmo-1;
 				if(Aiming)
@@ -366,10 +380,9 @@ void APortfolioProjectCharacter::Fire()
 		}
 		else
 		{
-			if(AmmoRedFlashFunc == nullptr)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("YesNoneFlashFunction"));
-			}
+			//UE_LOG(LogTemp, Warning, TEXT("WidgetAnim is Cool"));
+			Hudwidgetcasted->PlayAnimationByName(TEXT("NoAmmoAnimation"),0.f,1,EUMGSequencePlayMode::Forward,2.f);
+			
 		}
 	}
 }
@@ -384,12 +397,15 @@ void APortfolioProjectCharacter::Reloading()
 	UAnimInstance* AnimInstance =PlayerSkeletalMesh->GetAnimInstance();
 	if(CurrentAmmo<15)
 	{
+		ReloadNow = true;
 		AnimInstance->Montage_Play(ReloadingMontage);
+		
 		UGameplayStatics::PlaySoundAtLocation(this,ReloadingSound,GetActorLocation());
 		ReloadingAmmo = 15-CurrentAmmo;
 		CurrentAmmo = ReloadingAmmo + CurrentAmmo;
 		SaveAmmo = SaveAmmo - ReloadingAmmo;
 	}
+	
 }
 
 void APortfolioProjectCharacter::SKillShot1()

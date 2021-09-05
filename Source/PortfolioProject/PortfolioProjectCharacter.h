@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/WidgetComponent.h"
+#include "PlayerUIWidget.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
 #include "PortfolioProjectCharacter.generated.h"
@@ -124,7 +125,8 @@ public:
 	bool ForEnemySendRO635IsDead= false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool ForEnemySendCommanderIsDead= false;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool ReloadNow= false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ForPlayerG36CCurrentHP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -181,7 +183,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UUserWidget> HurtWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<class UUserWidget> HUD_Player_UIWidgetClass;
+	TSubclassOf<class UPlayerUIWidget> HUD_Player_UIWidgetClass;
 	//동료 위젯클래스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UUserWidget> G36CWidgetClass;
@@ -214,7 +216,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UUserWidget* HurtUI;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UUserWidget* HUD_Player_UI;
+	UPlayerUIWidget* HUD_Player_UI;
 	//동료 인스턴스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UUserWidget* G36CUI;

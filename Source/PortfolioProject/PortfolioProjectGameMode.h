@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "PortfolioProjectGameMode.generated.h"
 
+class UUserWidget;
+
 UCLASS(minimalapi)
 class APortfolioProjectGameMode : public AGameModeBase
 {
@@ -13,6 +15,8 @@ class APortfolioProjectGameMode : public AGameModeBase
 
 public:
 	APortfolioProjectGameMode();
+
+	virtual void BeginPlay() override;
 };
 
 

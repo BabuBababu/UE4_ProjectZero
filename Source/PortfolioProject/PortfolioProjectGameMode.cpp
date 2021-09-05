@@ -1,6 +1,7 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "PortfolioProjectGameMode.h"
+#include "Blueprint/UserWidget.h"
 #include "PortfolioProjectCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -12,4 +13,9 @@ APortfolioProjectGameMode::APortfolioProjectGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}*/
+}
+
+void APortfolioProjectGameMode::BeginPlay()
+{
+	Super::BeginPlay();
 }
