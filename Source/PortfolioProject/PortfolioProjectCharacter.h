@@ -7,6 +7,7 @@
 #include "PlayerUIWidget.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
+#include "MyLineTrace.h"
 #include "PortfolioProjectCharacter.generated.h"
 
 class UCurveFloat;
@@ -14,6 +15,7 @@ class UAnimMontage;
 class USoundBase;
 class UMatineeCameraShake;
 class UParticleSystem;
+class UMyLineTrace;
 
 UCLASS(config=Game)
 class APortfolioProjectCharacter : public ACharacter
@@ -195,6 +197,9 @@ public:
 	//카메라 쉐이크
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<UMatineeCameraShake> CameraShake;
+	//라인트레이스
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMyLineTrace* LineTrace;
 
 	//파티클 시스템
 	UPROPERTY(EditAnywhere,Category="Shot Particle Effect")

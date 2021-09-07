@@ -16,6 +16,10 @@
 #include "TimerManager.h"
 #include "particles/ParticleSystem.h"
 #include "PlayerUIWidget.h"
+#include "DoubleHitEnemy.h"
+#include "MyLineTrace.h"
+#include "DrawDebugHelpers.h"
+#include "OneHitEnemy.h"
 #include "MyPlayerController.h"
 #include "GameFramework/Controller.h"
 #include "UObject/ConstructorHelpers.h"
@@ -29,6 +33,9 @@
 APortfolioProjectCharacter::APortfolioProjectCharacter()
 {
 	// 컴포넌트 초기화
+	//PrimaryActorTick.bCanEverTick=true;
+	
+	
 	RootComponent = GetCapsuleComponent();
 	
 	WeaponBack = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WeaponBack"));
@@ -114,6 +121,7 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	Skill1_2_Particle = Skill1_2_ParticleAdd.Object;
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> Heal_ParticleAdd(TEXT("/Game/StarterContent/Particles/P_Sparks.P_Sparks"));
 	Heal_Particle = Heal_ParticleAdd.Object;
+
 }
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -235,6 +243,11 @@ void APortfolioProjectCharacter::BeginPlay()
 		G36CUI->SetVisibility(ESlateVisibility::Hidden);
 		RO635UI->SetVisibility(ESlateVisibility::Hidden);
 		CommanderUI->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if(LineTrace == nullptr)
+	{
+		LineTrace=NewObject<UMyLineTrace>();
 	}
 
 }
@@ -448,13 +461,23 @@ void APortfolioProjectCharacter::SetSkill4Time()
 void APortfolioProjectCharacter::OnShoot()
 {
 	
-	//AMyPlayerController* const PlayerController = Cast<AMyPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 	
 	//UE_LOG(LogTemp, Warning, TEXT("YesPArticle"));
-
 	GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(CameraShake, 1.0f,ECameraShakePlaySpace::CameraLocal,FRotator::ZeroRotator);
 	UGameplayStatics::SpawnEmitterAttached(OnShoot_Particle,WeaponRight,FName("Muzzle"),FVector(0.f,0.f,0.f), FRotator(0.f,0.f,0.f),FVector(1), EAttachLocation::SnapToTarget,true,EPSCPoolMethod::None,true);
 	UGameplayStatics::PlaySoundAtLocation(this,FireSound,GetActorLocation());
+
+	//라인트레이싱
+	if(LineTrace != nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NotNull"));
+		LineTrace->OnFire(this);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No,noHit"));
+	}
+	
 }
 
 
