@@ -25,10 +25,3 @@ void ADoubleHitEnemy::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input
-void ADoubleHitEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
