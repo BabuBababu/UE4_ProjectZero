@@ -43,7 +43,12 @@ ADoubleHitEnemy::ADoubleHitEnemy()
 	SkeletalMesh->SetRelativeLocation(EnemyLocation);
 	SkeletalMesh->SetRelativeRotation(EnemyRotation);
 	SkeletalMesh->SetRelativeScale3D(EnemyScale);
+	
 	UClass* tempClass = AnimBP->GetClass();
+	if(AnimBP->GetClass())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AnimClass Succeed!"));
+	}
 	SkeletalMesh->SetAnimInstanceClass(tempClass);
 
 }
