@@ -33,7 +33,7 @@
 APortfolioProjectCharacter::APortfolioProjectCharacter()
 {
 	// 컴포넌트 초기화
-	//PrimaryActorTick.bCanEverTick=true;
+	PrimaryActorTick.bCanEverTick=true;
 	
 	
 	RootComponent = GetCapsuleComponent();
@@ -383,7 +383,7 @@ void APortfolioProjectCharacter::Fire()
 					ComboSound10 = ComboSound10+1;
 					if(ComboSound10 >= 10 && FMath::RandRange(0,1))
 					{
-						UE_LOG(LogTemp, Warning, TEXT("sound"));
+						//UE_LOG(LogTemp, Warning, TEXT("sound"));
 						UGameplayStatics::PlaySoundAtLocation(this,AttackVoiceSound,AActor::GetActorLocation());
 						ComboSound10 = 0;
 					}

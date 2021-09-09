@@ -1,0 +1,62 @@
+[
+	{
+		"Name": "NewRow",
+		"D_DoubleHitEnemyName": "Hulk",
+		"D_CurrentHP": 0,
+		"D_MaxHP": 1000,
+		"D_Damage": 30,
+		"D_Mesh": "SkeletalMesh'/Game/Movable/ZombieAsset/Hulk/Hulk.Hulk'",
+		"D_BodyX": 50,
+		"D_BodyY": 120,
+		"D_HandRdius": 40,
+		"D_LHandFLocation":
+		{
+			"X": 16.999998092651367,
+			"Y": -3.0000001061125658e-06,
+			"Z": 9.9999999747524271e-07
+		},
+		"D_RHandFLocation":
+		{
+			"X": -16.999998092651367,
+			"Y": 3.0000001061125658e-06,
+			"Z": -9.9999999747524271e-07
+		},
+		"D_WidgetFLocation":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 132
+		},
+		"D_AnimBP": "AnimBlueprint'/Game/Movable/ZombieAsset/Hulk/Animation/CPP_Hulk_Anim.CPP_Hulk_Anim'"
+	},
+	{
+		"Name": "NewRow_0",
+		"D_DoubleHitEnemyName": "Parasite",
+		"D_CurrentHP": 0,
+		"D_MaxHP": 300,
+		"D_Damage": 15,
+		"D_Mesh": "SkeletalMesh'/Game/Movable/ZombieAsset/Stalker/Stalker.Stalker'",
+		"D_BodyX": 34,
+		"D_BodyY": 105,
+		"D_HandRdius": 30,
+		"D_LHandFLocation":
+		{
+			"X": 16.999998092651367,
+			"Y": -3.0000001061125658e-06,
+			"Z": 9.9999999747524271e-07
+		},
+		"D_RHandFLocation":
+		{
+			"X": -16.999998092651367,
+			"Y": 3.0000001061125658e-06,
+			"Z": -9.9999999747524271e-07
+		},
+		"D_WidgetFLocation":
+		{
+			"X": 0,
+			"Y": 0,
+			"Z": 82
+		},
+		"D_AnimBP": "AnimBlueprint'/Game/Movable/ZombieAsset/Stalker/Animation/CPP_Stalker_Anim.CPP_Stalker_Anim'"
+	}
+]
