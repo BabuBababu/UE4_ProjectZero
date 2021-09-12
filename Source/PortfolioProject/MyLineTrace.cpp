@@ -57,6 +57,8 @@ void UMyLineTrace::OnFire(APortfolioProjectCharacter* Player)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("SucceedCastDouble"));
 			DrawDebugBox(Player->GetWorld(),HitResult.ImpactPoint,FVector(5,5,5),FColor::Yellow,false,2.f);
+			UGameplayStatics::SpawnEmitterAtLocation(Player->GetWorld(),Blood_Particle,HitLoc,FRotator(0.f,0.f,0.f),FVector(3),true,EPSCPoolMethod::None,true);
+		
 		}
 		else if (OneEnemy)
 		{

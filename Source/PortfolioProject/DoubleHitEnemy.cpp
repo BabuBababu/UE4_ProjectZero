@@ -55,7 +55,7 @@ ADoubleHitEnemy::ADoubleHitEnemy()
 	
 	
 	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimObj((TEXT("%s"),*AnimName));
-	//GEngine->AddOnScreenDebugMessage(-1,200,FColor::Green,FString::Printf(TEXT("%s"),*AnimName));
+
 	if(AnimObj.Succeeded())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AnimInstance Succeed!"));
