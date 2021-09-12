@@ -6,58 +6,20 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
 #include "Engine/DataTable.h"
+#include "Animation/AnimInstance.h"
 #include "Components/WidgetComponent.h"
 #include "DoubleHitEnemy.generated.h"
 
-
-USTRUCT()
-struct FDoubleHitEnemyData : public FTableRowBase
-{
-	GENERATED_BODY()
-
-	//이름
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FString D_DoubleHitEnemyName;
-	//HP
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float D_CurrentHP;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float D_MaxHP;
-	//Damage
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float D_Damage;
-
-	//메쉬
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	class USkeletalMesh* D_Mesh;
-	//본체,양손 구 컴포넌트
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float D_BodyX;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float D_BodyY;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	float D_HandRdius;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FVector D_LHandFLocation;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FVector D_RHandFLocation;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FVector D_WidgetFLocation;
-	//위치
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FVector D_Location;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FRotator D_Rotation;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	FVector D_Scale;
-
-	//애니메이션BP
-	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	class UAnimBlueprint* D_AnimBP;
-	
-	
-	
-};
+//
+// USTRUCT()
+// struct FDoubleHitEnemyData : public FTableRowBase
+// {
+// 	GENERATED_BODY()
+//
+// 	
+// 	
+// 	
+// };
 
 class UParticleSystem;
 
@@ -120,9 +82,12 @@ public:
 	FRotator EnemyRotation;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FVector EnemyScale;
-	
+
+
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	UAnimBlueprint* AnimBP;
+	FString AnimName;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TSubclassOf<class UAnimInstance> AnimInstance;
 	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -132,7 +97,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class UDataTable* EnemyDataTable;
-
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsDead;

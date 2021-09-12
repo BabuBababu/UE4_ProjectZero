@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/SkeletalMeshComponent.h"
+#include "DoubleEnemyDataTable.h"
 #include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
@@ -27,29 +28,43 @@ ADoubleHitEnemy::ADoubleHitEnemy()
 	static ConstructorHelpers::FObjectFinder<UDataTable> DoubleHitEnemyDataObject(TEXT("/Game/Movable/DataTable/DoubleHitEnemyDataTable"));
 	if(DoubleHitEnemyDataObject.Succeeded())
 	{
+		UE_LOG(LogTemp, Warning, TEXT("DataTable Succeed!"));
 		EnemyDataTable = DoubleHitEnemyDataObject.Object;
 	}
-	
 	// 좀비 이름에 의한 랜덤화
 	SetEnemy("Hulk");
-	
 	EnemyWidget->SetupAttachment(RootComponent);
 	SkeletalMesh->SetupAttachment(RootComponent);
 	LHand->SetupAttachment(SkeletalMesh,TEXT("LeftHand"));
 	RHand->SetupAttachment(SkeletalMesh,TEXT("RightHand"));
+	
 	
 	//데이터테이블 적용
 	SkeletalMesh->SetSkeletalMesh(SMesh);
 	SkeletalMesh->SetRelativeLocation(EnemyLocation);
 	SkeletalMesh->SetRelativeRotation(EnemyRotation);
 	SkeletalMesh->SetRelativeScale3D(EnemyScale);
+	GetCapsuleComponent()->InitCapsuleSize(BodyX, BodyY);
+	LHand->InitSphereRadius(HandRdius);
+	LHand->SetRelativeLocation(LHandFLocation);
+	RHand->InitSphereRadius(HandRdius);
+	RHand->SetRelativeLocation(RHandFLocation);
+	EnemyWidget->SetRelativeLocation(WidgetFLocation);
+	EnemyWidget->SetRelativeRotation(FRotator(0.0f,0.0f,0.0f));
+	EnemyWidget->SetRelativeScale3D(FVector(1.0f,1.0f,1.0f));
 	
-	UClass* tempClass = AnimBP->GetClass();
-	if(AnimBP->GetClass())
+	
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimObj((TEXT("%s"),*AnimName));
+	//GEngine->AddOnScreenDebugMessage(-1,200,FColor::Green,FString::Printf(TEXT("%s"),*AnimName));
+	if(AnimObj.Succeeded())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AnimClass Succeed!"));
+		UE_LOG(LogTemp, Warning, TEXT("AnimInstance Succeed!"));
+		AnimInstance = AnimObj.Class;
+		SkeletalMesh->SetAnimInstanceClass(AnimInstance);
 	}
-	SkeletalMesh->SetAnimInstanceClass(tempClass);
+	
+
+	
 
 }
 
@@ -57,6 +72,12 @@ ADoubleHitEnemy::ADoubleHitEnemy()
 void ADoubleHitEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	
+	
+	//GEngine->AddOnScreenDebugMessage(-1,200,FColor::Green,FString::Printf(TEXT("%s"),AnimBP->GetClass()));
+	
+	
 }
 
 // Called every frame
@@ -68,7 +89,7 @@ void ADoubleHitEnemy::Tick(float DeltaTime)
 
  void ADoubleHitEnemy::SetEnemy(FName EnemyName)
  {
- 	FDoubleHitEnemyData* EnemyData = EnemyDataTable->FindRow<FDoubleHitEnemyData>(EnemyName,FString(""));
+ 	FDoubleEnemyDataTable* EnemyData = EnemyDataTable->FindRow<FDoubleEnemyDataTable>(EnemyName,FString(""));
  	if(EnemyData)
  	{
  		UE_LOG(LogTemp, Warning, TEXT("EnemyData Succeed!"));
@@ -84,20 +105,13 @@ void ADoubleHitEnemy::Tick(float DeltaTime)
  		EnemyLocation = EnemyData->D_Location;
  		EnemyRotation = EnemyData->D_Rotation;
  		EnemyScale = EnemyData->D_Scale;
- 		AnimBP = EnemyData->D_AnimBP;
  		Damage = EnemyData->D_Damage;
+ 		AnimName= EnemyData->D_AnimName;
  		
  	}
 
 
 
- 	GetCapsuleComponent()->InitCapsuleSize(BodyX, BodyY);
- 	LHand->InitSphereRadius(HandRdius);
- 	LHand->SetRelativeLocation(LHandFLocation);
- 	RHand->InitSphereRadius(HandRdius);
- 	RHand->SetRelativeLocation(RHandFLocation);
- 	EnemyWidget->SetRelativeLocation(WidgetFLocation);
- 	EnemyWidget->SetRelativeRotation(FRotator(0.0f,0.0f,0.0f));
- 	EnemyWidget->SetRelativeScale3D(FVector(1.0f,1.0f,1.0f));
+ 
  }
 
