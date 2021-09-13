@@ -2,6 +2,9 @@
 
 
 #include "MyLineTrace.h"
+
+#include <d3d10.h>
+
 #include "PortfolioProjectCharacter.h"
 #include "DoubleHitEnemy.h"
 #include "OneHitEnemy.h"
@@ -55,14 +58,39 @@ void UMyLineTrace::OnFire(APortfolioProjectCharacter* Player)
 		auto OneEnemy = Cast<AOneHitEnemy>(HitResult.GetActor());
 		if(DoubleEnemy)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("SucceedCastDouble"));
-			DrawDebugBox(Player->GetWorld(),HitResult.ImpactPoint,FVector(5,5,5),FColor::Yellow,false,2.f);
-			UGameplayStatics::SpawnEmitterAtLocation(Player->GetWorld(),Blood_Particle,HitLoc,FRotator(0.f,0.f,0.f),FVector(3),true,EPSCPoolMethod::None,true);
-		
+			if(Player->IsActingSkill)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Skill1_SucceedCastDouble"));
+				DrawDebugBox(Player->GetWorld(),HitResult.ImpactPoint,FVector(5,5,5),FColor::Yellow,false,2.f);
+				UGameplayStatics::SpawnEmitterAtLocation(Player->GetWorld(),Blood_Particle,HitLoc,FRotator(0.f,0.f,0.f),FVector(4.5),true,EPSCPoolMethod::None,true);
+				//여기에 대미지 적용
+				DoubleEnemy->MyReceiveDamage(Player->Skill1Damage,HitResult.BoneName,UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+				UGameplayStatics::ApplyDamage(DoubleEnemy,Player->Skill1Damage,nullptr,nullptr,nullptr);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("SucceedCastDouble"));
+				DrawDebugBox(Player->GetWorld(),HitResult.ImpactPoint,FVector(5,5,5),FColor::Yellow,false,2.f);
+				UGameplayStatics::SpawnEmitterAtLocation(Player->GetWorld(),Blood_Particle,HitLoc,FRotator(0.f,0.f,0.f),FVector(3),true,EPSCPoolMethod::None,true);
+				//여기에 대미지 적용
+				DoubleEnemy->MyReceiveDamage(Player->PlayerDamage,HitResult.BoneName,UGameplayStatics::GetPlayerCharacter(GetWorld(),0));
+				UGameplayStatics::ApplyDamage(DoubleEnemy,Player->PlayerDamage,nullptr,nullptr,nullptr);
+			}
 		}
 		else if (OneEnemy)
 		{
-			DrawDebugBox(Player->GetWorld(),HitResult.ImpactPoint,FVector(5,5,5),FColor::Blue,false,2.f);
+			if(Player->IsActingSkill)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Skill1_SucceedCastDouble"));
+				DrawDebugBox(Player->GetWorld(),HitResult.ImpactPoint,FVector(5,5,5),FColor::Blue,false,2.f);
+				UGameplayStatics::SpawnEmitterAtLocation(Player->GetWorld(),Blood_Particle,HitLoc,FRotator(0.f,0.f,0.f),FVector(3),true,EPSCPoolMethod::None,true);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("SucceedCastDouble"));
+				DrawDebugBox(Player->GetWorld(),HitResult.ImpactPoint,FVector(5,5,5),FColor::Blue,false,2.f);
+				UGameplayStatics::SpawnEmitterAtLocation(Player->GetWorld(),Blood_Particle,HitLoc,FRotator(0.f,0.f,0.f),FVector(2),true,EPSCPoolMethod::None,true);
+			}
 		}
 		else
 		{

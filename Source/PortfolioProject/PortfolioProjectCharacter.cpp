@@ -296,16 +296,14 @@ void APortfolioProjectCharacter::EquipRifle()
 	//UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(this->GetCharacterMovement());
 	if(RifleEquipped)
 	{
-		if(!ReloadNow)
-		{
-			RifleEquipped = false;
-			GetCharacterMovement()->MaxWalkSpeed= 300.f;
-			GetCharacterMovement()->MaxWalkSpeedCrouched= 100.f;
-			WeaponBack->SetStaticMesh(WA2000Class);
-			WeaponRight->SetStaticMesh(nullptr);
-		}
-		
-		
+		if(!ReloadNow&& !Aiming)
+			{
+				RifleEquipped = false;
+				GetCharacterMovement()->MaxWalkSpeed= 300.f;
+				GetCharacterMovement()->MaxWalkSpeedCrouched= 100.f;
+				WeaponBack->SetStaticMesh(WA2000Class);
+				WeaponRight->SetStaticMesh(nullptr);
+			}
 	}
 	else
 	{
@@ -364,7 +362,7 @@ void APortfolioProjectCharacter::Fire()
 	UAnimInstance* AnimInstance =PlayerSkeletalMesh->GetAnimInstance();
 	UUserWidget* Hudwidget = HUDWidget->GetUserWidgetObject();
 	UPlayerUIWidget* Hudwidgetcasted = Cast<UPlayerUIWidget>(Hudwidget);
-	UWidgetBlueprintGeneratedClass* WidgetAnim = Cast<UWidgetBlueprintGeneratedClass>(GetClass());
+	//UWidgetBlueprintGeneratedClass* WidgetAnim = Cast<UWidgetBlueprintGeneratedClass>(GetClass());
 		
 	//UFunction *AmmoRedFlashFunc = dynamic_cast<UFunction *>(Hudwidget->GetWidgetFromName(FName("Ammo red flash")));
 	//AMyPlayerController* const PlayerController = Cast<AMyPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
@@ -423,7 +421,59 @@ void APortfolioProjectCharacter::Reloading()
 
 void APortfolioProjectCharacter::SKillShot1()
 {
-	
+	UAnimInstance* AnimInstance =PlayerSkeletalMesh->GetAnimInstance();
+	UUserWidget* Hudwidget = HUDWidget->GetUserWidgetObject();
+	UPlayerUIWidget* Hudwidgetcasted = Cast<UPlayerUIWidget>(Hudwidget);
+	FTimerHandle WaitHandle;
+	float WaitTime = 1.8f;
+	if(!IsActingSkill && RifleEquipped && Skill1Time == 0.0f)
+	{
+		if (CurrentAmmo >0)
+		{
+			if(!AnimInstance->Montage_IsPlaying(ReloadingMontage))
+			{
+				if(!IsActingSkill)
+				{
+					IsActingSkill = true;
+					Hudwidgetcasted->PlayAnimationByName(TEXT("Skill1TimeAnimation"),0.f,1,EUMGSequencePlayMode::Forward,1.f);
+					Skill1Time = 10.f;
+					GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(CameraShake, 3.0f,ECameraShakePlaySpace::CameraLocal,FRotator::ZeroRotator);
+					AnimInstance->Montage_Play(Skill1Montage);
+					UGameplayStatics::SpawnEmitterAttached(Skill1_1_Particle,WeaponRight,FName("Muzzle"),FVector(0.f,0.f,0.f), FRotator(0.f,0.f,0.f),FVector(1), EAttachLocation::SnapToTarget,true,EPSCPoolMethod::None,true);
+					UGameplayStatics::SpawnEmitterAttached(Skill1_2_Particle,WeaponRight,FName("Muzzle"),FVector(0.f,0.f,0.f), FRotator(0.f,0.f,0.f),FVector(1), EAttachLocation::SnapToTarget,true,EPSCPoolMethod::None,true);
+
+
+
+					//라인트레이싱
+					if(LineTrace != nullptr)
+					{
+						UE_LOG(LogTemp, Warning, TEXT("NotNull"));
+						LineTrace->OnFire(this);
+					}
+					else
+					{
+						UE_LOG(LogTemp, Warning, TEXT("No,noHit"));
+					}
+					
+					GetWorld()->GetTimerManager().SetTimer(WaitHandle,FTimerDelegate::CreateLambda([&]
+					{	//delay
+						CurrentAmmo -= 1;
+						IsActingSkill = false;
+						UGameplayStatics::PlaySoundAtLocation(this,Skill1Sound,GetActorLocation());
+						ComboSound10 = 0;
+					}), WaitTime,false);
+					
+					
+
+				}
+			}
+		}
+		else
+		{
+			Hudwidgetcasted->PlayAnimationByName(TEXT("NoAmmoAnimation"),0.f,1,EUMGSequencePlayMode::Forward,2.f);
+		}
+		
+	}
 }
 void APortfolioProjectCharacter::Heal()
 {
@@ -451,12 +501,12 @@ void APortfolioProjectCharacter::ESCMenu()
 
 void APortfolioProjectCharacter::SetSkill1Time()
 {
-	Skill1Time = FMath::Clamp(Skill1Time-1.0f,0.f,1.f);
+	Skill1Time = FMath::Clamp(Skill1Time-1.0f,0.f,10.f);
 }
 
 void APortfolioProjectCharacter::SetSkill4Time()
 {
-	Skill4Time = FMath::Clamp(Skill1Time-1.0f,0.f,1.f);
+	Skill4Time = FMath::Clamp(Skill1Time-1.0f,0.f,10.f);
 }
 
 void APortfolioProjectCharacter::OnShoot()

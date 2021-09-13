@@ -100,6 +100,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CurrentHP;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PlayerDamage = 30.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Skill1Damage = 200.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int CurrentAmmo = 15;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int SaveAmmo = 1000;

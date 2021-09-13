@@ -149,3 +149,22 @@ void ADoubleHitEnemy::Tick(float DeltaTime)
  
  }
 
+void ADoubleHitEnemy::MyReceiveDamage(float damage, FName boneName, AActor* DamageCauser)
+{
+	if (boneName == TEXT("Head")|| boneName == TEXT("Spine2"))
+	{
+		damage *= 2;
+	}
+	CyrrentHealth -= damage;
+	if (CyrrentHealth <= 0)
+	{
+		Death();
+	}
+	
+}
+
+void ADoubleHitEnemy::Death()
+{
+	//UE_LOG(LogTemp, Warning, TEXT("DoubleHitEnemy_Die!"));
+}
+

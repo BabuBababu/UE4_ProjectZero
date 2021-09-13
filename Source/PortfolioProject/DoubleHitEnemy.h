@@ -52,6 +52,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	void SetEnemy(FName EnemyName);
+	void MyReceiveDamage(float damage, FName boneName, AActor* DamageCauser);
+	void Death();
 	//데이터 테이블 행
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMesh* SMesh;
