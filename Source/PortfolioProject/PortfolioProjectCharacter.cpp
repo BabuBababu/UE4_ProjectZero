@@ -425,10 +425,10 @@ void APortfolioProjectCharacter::SKillShot1()
 	UUserWidget* Hudwidget = HUDWidget->GetUserWidgetObject();
 	UPlayerUIWidget* Hudwidgetcasted = Cast<UPlayerUIWidget>(Hudwidget);
 	FTimerHandle WaitHandle;
-	float WaitTime = 1.8f;
+	float WaitTime = 1.5f;
 	if(!IsActingSkill && RifleEquipped && Skill1Time == 0.0f)
 	{
-		if (CurrentAmmo >0)
+		if (CurrentAmmo >2)
 		{
 			if(!AnimInstance->Montage_IsPlaying(ReloadingMontage))
 			{
@@ -436,7 +436,7 @@ void APortfolioProjectCharacter::SKillShot1()
 				{
 					IsActingSkill = true;
 					Hudwidgetcasted->PlayAnimationByName(TEXT("Skill1TimeAnimation"),0.f,1,EUMGSequencePlayMode::Forward,1.f);
-					Skill1Time = 10.f;
+					Skill1Time = 2.f;
 					GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(CameraShake, 3.0f,ECameraShakePlaySpace::CameraLocal,FRotator::ZeroRotator);
 					AnimInstance->Montage_Play(Skill1Montage);
 					UGameplayStatics::SpawnEmitterAttached(Skill1_1_Particle,WeaponRight,FName("Muzzle"),FVector(0.f,0.f,0.f), FRotator(0.f,0.f,0.f),FVector(1), EAttachLocation::SnapToTarget,true,EPSCPoolMethod::None,true);
@@ -454,13 +454,16 @@ void APortfolioProjectCharacter::SKillShot1()
 					{
 						UE_LOG(LogTemp, Warning, TEXT("No,noHit"));
 					}
+					CurrentAmmo -= 3;
 					
 					GetWorld()->GetTimerManager().SetTimer(WaitHandle,FTimerDelegate::CreateLambda([&]
 					{	//delay
-						CurrentAmmo -= 1;
 						IsActingSkill = false;
-						UGameplayStatics::PlaySoundAtLocation(this,Skill1Sound,GetActorLocation());
 						ComboSound10 = 0;
+						if(FMath::RandRange(0,1) && FMath::RandRange(0,1)) // 1/4확률로 음성사운드
+						{
+							UGameplayStatics::PlaySoundAtLocation(this,Skill1Sound,GetActorLocation());
+						}
 					}), WaitTime,false);
 					
 					
@@ -501,7 +504,7 @@ void APortfolioProjectCharacter::ESCMenu()
 
 void APortfolioProjectCharacter::SetSkill1Time()
 {
-	Skill1Time = FMath::Clamp(Skill1Time-1.0f,0.f,10.f);
+	Skill1Time = FMath::Clamp(Skill1Time-1.0f,0.f,2.f);
 }
 
 void APortfolioProjectCharacter::SetSkill4Time()
