@@ -7,6 +7,7 @@
 #include "Components/WidgetComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "DoubleEnemyDataTable.h"
+#include "math.h"
 #include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
@@ -31,14 +32,52 @@ ADoubleHitEnemy::ADoubleHitEnemy()
 		UE_LOG(LogTemp, Warning, TEXT("DataTable Succeed!"));
 		EnemyDataTable = DoubleHitEnemyDataObject.Object;
 	}
-	// 좀비 이름에 의한 랜덤화
-	SetEnemy("Hulk");
+
+	SkeletalMesh->SetSkeletalMesh(SMesh); //팔 붙이기 위해 임시로 아무거나 넣어두기
 	EnemyWidget->SetupAttachment(RootComponent);
 	SkeletalMesh->SetupAttachment(RootComponent);
 	LHand->SetupAttachment(SkeletalMesh,TEXT("LeftHand"));
 	RHand->SetupAttachment(SkeletalMesh,TEXT("RightHand"));
+
 	
 	
+	//애님인스턴스 전부 선언
+	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimObj((TEXT("%s"),*AnimName));
+	
+	static ConstructorHelpers::FClassFinder<UAnimInstance> HulkAnimObj(TEXT("/Game/Movable/ZombieAsset/Hulk/Animation/CPP_Hulk_Anim"));
+	static ConstructorHelpers::FClassFinder<UAnimInstance> ParasiteAnimObj(TEXT("/Game/Movable/ZombieAsset/Parasite/ZombieAnimation/CPP_Parasite_Anim"));
+
+
+	if(HulkAnimObj.Succeeded())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Hulk AnimInstance Succeed!"));
+		HulkAnimInstance = HulkAnimObj.Class;
+	}
+	if(HulkAnimObj.Succeeded())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Parasite AnimInstance Succeed!"));
+		ParasiteAnimInstance = ParasiteAnimObj.Class;
+	}
+	
+
+	//UE_LOG(LogTemp, Warning, TEXT("InitRandomName: %s"),*RandomName.ToString());
+
+}
+
+// Called when the game starts or when spawned
+void ADoubleHitEnemy::BeginPlay()
+{
+	Super::BeginPlay();
+	
+	//좀비 랜덤으로 이름을 선택
+	auto List = EnemyDataTable->GetRowNames();
+	RandomName = List[FMath::RandRange(0,1)];
+	FDoubleEnemyDataTable* EnemyData = EnemyDataTable->FindRow<FDoubleEnemyDataTable>(RandomName,FString(""));
+
+	
+	//이름에 의한 좀비 초기화
+	SetEnemy(RandomName);
+	UE_LOG(LogTemp, Warning, TEXT("BeginplayRandomName: %s"),*RandomName.ToString());
 	//데이터테이블 적용
 	SkeletalMesh->SetSkeletalMesh(SMesh);
 	SkeletalMesh->SetRelativeLocation(EnemyLocation);
@@ -52,31 +91,26 @@ ADoubleHitEnemy::ADoubleHitEnemy()
 	EnemyWidget->SetRelativeLocation(WidgetFLocation);
 	EnemyWidget->SetRelativeRotation(FRotator(0.0f,0.0f,0.0f));
 	EnemyWidget->SetRelativeScale3D(FVector(1.0f,1.0f,1.0f));
-	
-	
-	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimObj((TEXT("%s"),*AnimName));
-
-	if(AnimObj.Succeeded())
+	//손 붙이기
+	//애니메이션 설정
+	if (DefaultEnemyName == "Hulk")
 	{
-		UE_LOG(LogTemp, Warning, TEXT("AnimInstance Succeed!"));
-		AnimInstance = AnimObj.Class;
-		SkeletalMesh->SetAnimInstanceClass(AnimInstance);
+		SkeletalMesh->SetAnimInstanceClass(HulkAnimInstance);
+	}
+	else if (DefaultEnemyName == "Parasite")
+	{
+		SkeletalMesh->SetAnimInstanceClass(ParasiteAnimInstance);
 	}
 	
-
-	
-
-}
-
-// Called when the game starts or when spawned
-void ADoubleHitEnemy::BeginPlay()
-{
-	Super::BeginPlay();
-
-	
-	
-	//GEngine->AddOnScreenDebugMessage(-1,200,FColor::Green,FString::Printf(TEXT("%s"),AnimBP->GetClass()));
-	
+	//GEngine->AddOnScreenDebugMessage(-1,200,FColor::Green,FString::Printf(TEXT("%s"),AnimName));
+	if(DefaultEnemyName == "Parasite")
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Name Parasite Okay!"));
+	}
+	else if (DefaultEnemyName == "Hulk")
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Name Hulk Okay!"));
+	}
 	
 }
 

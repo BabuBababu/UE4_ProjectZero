@@ -62,6 +62,8 @@ public:
 	float MaxHealth;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
 	FName DefaultEnemyName = "Hulk";
+	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
+	FName RandomName;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	float BodyX;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
@@ -87,7 +89,9 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FString AnimName;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	TSubclassOf<class UAnimInstance> AnimInstance;
+	TSubclassOf<class UAnimInstance> HulkAnimInstance;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	TSubclassOf<class UAnimInstance> ParasiteAnimInstance;
 	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

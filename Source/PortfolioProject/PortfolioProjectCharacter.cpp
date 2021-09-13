@@ -423,6 +423,7 @@ void APortfolioProjectCharacter::Reloading()
 
 void APortfolioProjectCharacter::SKillShot1()
 {
+	
 }
 void APortfolioProjectCharacter::Heal()
 {
