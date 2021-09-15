@@ -367,7 +367,7 @@ void APortfolioProjectCharacter::Fire()
 	//UFunction *AmmoRedFlashFunc = dynamic_cast<UFunction *>(Hudwidget->GetWidgetFromName(FName("Ammo red flash")));
 	//AMyPlayerController* const PlayerController = Cast<AMyPlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 	
-	if(RifleEquipped)
+	if(RifleEquipped && !IsActingSkill)
 	{
 		if(CurrentAmmo>0)
 		{
@@ -425,7 +425,7 @@ void APortfolioProjectCharacter::SKillShot1()
 	UUserWidget* Hudwidget = HUDWidget->GetUserWidgetObject();
 	UPlayerUIWidget* Hudwidgetcasted = Cast<UPlayerUIWidget>(Hudwidget);
 	FTimerHandle WaitHandle;
-	float WaitTime = 1.5f;
+	float WaitTime = 2.f;
 	if(!IsActingSkill && RifleEquipped && Skill1Time == 0.0f)
 	{
 		if (CurrentAmmo >2)

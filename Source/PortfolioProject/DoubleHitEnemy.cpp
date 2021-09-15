@@ -8,6 +8,7 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "DoubleEnemyDataTable.h"
 #include "math.h"
+#include "MeleeEnemyAIController.h"
 #include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
@@ -59,7 +60,10 @@ ADoubleHitEnemy::ADoubleHitEnemy()
 		ParasiteAnimInstance = ParasiteAnimObj.Class;
 	}
 	
-
+	//AI컨트롤러 초기화
+	AIControllerClass = AMeleeEnemyAIController::StaticClass();
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+	
 	//UE_LOG(LogTemp, Warning, TEXT("InitRandomName: %s"),*RandomName.ToString());
 
 }
@@ -160,7 +164,6 @@ void ADoubleHitEnemy::MyReceiveDamage(float damage, FName boneName, AActor* Dama
 	{
 		Death();
 	}
-	
 }
 
 void ADoubleHitEnemy::Death()

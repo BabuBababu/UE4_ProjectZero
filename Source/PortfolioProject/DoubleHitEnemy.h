@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "MeleeEnemyAIController.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
 #include "Engine/DataTable.h"
@@ -57,6 +58,10 @@ public:
 	//데이터 테이블 행
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USkeletalMesh* SMesh;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AMeleeEnemyAIController* EnemyAI;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	ADoubleHitEnemy* EnemyCharacter;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float CyrrentHealth;
