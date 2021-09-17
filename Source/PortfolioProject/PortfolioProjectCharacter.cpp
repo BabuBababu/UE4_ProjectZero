@@ -122,6 +122,8 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> Heal_ParticleAdd(TEXT("/Game/StarterContent/Particles/P_Sparks.P_Sparks"));
 	Heal_Particle = Heal_ParticleAdd.Object;
 
+	//플레이어에 대한 AIperception용 
+	SetStimulus();
 }
 //////////////////////////////////////////////////////////////////////////
 // Input
@@ -532,6 +534,14 @@ void APortfolioProjectCharacter::OnShoot()
 		UE_LOG(LogTemp, Warning, TEXT("No,noHit"));
 	}
 	
+}
+
+void APortfolioProjectCharacter::SetStimulus()
+{
+	//몬스터용 Stimulus
+	stimulus = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("stimulus"));
+	stimulus->RegisterForSense(TSubclassOf<UAISense_Sight>());
+	stimulus->RegisterWithPerceptionSystem();
 }
 
 

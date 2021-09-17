@@ -8,6 +8,8 @@
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
 #include "MyLineTrace.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 #include "PortfolioProjectCharacter.generated.h"
 
 class UCurveFloat;
@@ -244,5 +246,8 @@ public:
 	//커스텀 이벤트
 	UFUNCTION(BlueprintCallable)
 	void OnShoot();
+private:
+	class UAIPerceptionStimuliSourceComponent* stimulus;
+	void SetStimulus();
 };
 

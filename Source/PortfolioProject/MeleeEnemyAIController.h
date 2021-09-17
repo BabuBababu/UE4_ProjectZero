@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AIController.h"
+#include "Perception/AIPerceptionTypes.h"
 #include "MeleeEnemyAIController.generated.h"
 
 /**
@@ -27,10 +28,32 @@ class PORTFOLIOPROJECT_API AMeleeEnemyAIController : public AAIController
 
 	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "AI", meta = (AllowPrivateAccess = "true"))
 	class UBehaviorTree* btree;
-
+	
 	class UBlackboardComponent* blackboard;
-
+	class UAISenseConfig_Sight* SightConfig;
+	
 	public:
 	static const FName HomePosKey;
-	static const FName PatrolPosKey;
+	static const FName TargetLocation;
+
+	UFUNCTION()
+	void OnUpdated(TArray<AActor*> const & updated_actors);
+	UFUNCTION()
+	void OnTargetDetected(AActor* actor, FAIStimulus const Stimulus);
+	UFUNCTION()
+	void SetPerceptionSystem();
+
+	//AI Perception 변수
+	public:
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float AISightRadius = 500.f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float AILoseSightRadius = 50.f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float AIFieldOfView = 90.f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float AISightAge = 5.f;
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	float AILastSeenLocation = 900.f;
+	
 };

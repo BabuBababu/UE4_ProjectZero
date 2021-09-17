@@ -7,11 +7,18 @@
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Perception/AISenseConfig_Sight.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AIPerceptionComponent.h"
+#include "BlackBoardKeys.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
+#include "Runtime/Engine/Classes/Engine/World.h"
 #include "EngineGlobals.h"
+#include "PortfolioProjectCharacter.h"
 
 
 const FName AMeleeEnemyAIController::HomePosKey(TEXT("HomePos"));
-const FName AMeleeEnemyAIController::PatrolPosKey(TEXT("PatrolPos"));
+const FName AMeleeEnemyAIController::TargetLocation(TEXT("TargetLocation"));
 
 AMeleeEnemyAIController::AMeleeEnemyAIController(FObjectInitializer const& object_initializer)
 {
@@ -23,7 +30,8 @@ AMeleeEnemyAIController::AMeleeEnemyAIController(FObjectInitializer const& objec
 	}
 	behavior_tree_component = object_initializer.CreateDefaultSubobject<UBehaviorTreeComponent>(this, TEXT("BehaviorComp"));
 	blackboard = object_initializer.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackboardComp"));
-
+	//Perception초기화
+	SetPerceptionSystem();
 }
 
 void AMeleeEnemyAIController::BeginPlay()
@@ -47,3 +55,38 @@ UBlackboardComponent* AMeleeEnemyAIController::get_blackboard() const
 {
 	return blackboard;
 }
+
+void AMeleeEnemyAIController::OnUpdated(TArray<AActor*> const& updated_actors)
+{
+}
+
+void AMeleeEnemyAIController::OnTargetDetected(AActor* actor, FAIStimulus const Stimulus)
+{
+	if (auto const player = Cast<APortfolioProjectCharacter>(actor))
+	{
+		//성공적으로 감지하면 블랙보드에 true값을 넣어준다.
+		get_blackboard()->SetValueAsBool(bb_keys::can_see_player,Stimulus.WasSuccessfullySensed());
+	}
+}
+
+void AMeleeEnemyAIController::SetPerceptionSystem()
+{
+	SightConfig = CreateOptionalDefaultSubobject<UAISenseConfig_Sight>(TEXT("Sight Config"));
+	SetPerceptionComponent(*CreateOptionalDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception")));
+	
+
+	SightConfig->SightRadius = AISightRadius;
+	SightConfig->LoseSightRadius = SightConfig->SightRadius+AILoseSightRadius;
+	SightConfig->PeripheralVisionAngleDegrees = AIFieldOfView;
+	SightConfig->SetMaxAge(AISightAge);
+	SightConfig->AutoSuccessRangeFromLastSeenLocation = AILastSeenLocation;
+	
+	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
+	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
+	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
+
+	GetPerceptionComponent()->SetDominantSense(*SightConfig->GetSenseImplementation());
+	GetPerceptionComponent()->OnTargetPerceptionUpdated.AddDynamic(this,&AMeleeEnemyAIController::OnTargetDetected);
+	GetPerceptionComponent()->ConfigureSense(*SightConfig);
+}
+
