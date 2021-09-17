@@ -5,9 +5,9 @@
 #include "MeleeEnemyAIController.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "BehaviorTree/BlackboardData.h"
+#include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
+#include "BlackBoardKeys.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "EngineGlobals.h"
 
 
 UFindPatrolPosTask::UFindPatrolPosTask(FObjectInitializer const& object_initializer)

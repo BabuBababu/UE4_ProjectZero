@@ -3,13 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
+#include "GameFramework/Character.h"
 #include "BehaviorTree/BTTaskNode.h"
+#include "BehaviorTree/BehaviorTreeTypes.h"
+#include "UObject/UObjectGlobals.h"
 #include "FindPatrolPosTask.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Blueprintable)
 class PORTFOLIOPROJECT_API UFindPatrolPosTask : public UBTTaskNode
 {
 	GENERATED_BODY()
