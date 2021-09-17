@@ -32,6 +32,8 @@ AMeleeEnemyAIController::AMeleeEnemyAIController(FObjectInitializer const& objec
 	blackboard = object_initializer.CreateDefaultSubobject<UBlackboardComponent>(this, TEXT("BlackboardComp"));
 	//Perception초기화
 	SetPerceptionSystem();
+	
+	
 }
 
 void AMeleeEnemyAIController::BeginPlay()
