@@ -8,6 +8,9 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "DoubleEnemyDataTable.h"
+#include "BlackBoardKeys.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "math.h"
 #include "MeleeEnemyAIController.h"
 #include "Components/WidgetComponent.h"
@@ -98,6 +101,7 @@ void ADoubleHitEnemy::BeginPlay()
 	EnemyWidget->SetRelativeLocation(WidgetFLocation);
 	EnemyWidget->SetRelativeRotation(FRotator(0.0f,0.0f,0.0f));
 	EnemyWidget->SetRelativeScale3D(FVector(1.0f,1.0f,1.0f));
+	CurrentHealth = MaxHealth;
 	//손 붙이기
 	//애니메이션 설정
 	if (DefaultEnemyName == "Hulk")
@@ -125,6 +129,7 @@ void ADoubleHitEnemy::BeginPlay()
 void ADoubleHitEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	//GEngine->AddOnScreenDebugMessage(-1,200,FColor::Green,FString::Printf(TEXT("%s"),CurrentHealth));
 
 }
 
@@ -158,19 +163,36 @@ void ADoubleHitEnemy::Tick(float DeltaTime)
 
 void ADoubleHitEnemy::MyReceiveDamage(float damage, FName boneName, AActor* DamageCauser)
 {
+	ACharacter* const Player = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
+	auto* const Cont = Cast<AMeleeEnemyAIController>(GetController());
+	FVector const Player_Location = Player->GetActorLocation();
+	
 	if (boneName == TEXT("Head")|| boneName == TEXT("Spine2"))
 	{
 		damage *= 2;
 	}
-	CyrrentHealth -= damage;
-	if (CyrrentHealth <= 0)
+	CurrentHealth -= damage;
+	if (CurrentHealth <= 0)
 	{
 		Death();
 	}
+	//피격시 플레이어 보기 변수 true,및 위치 갱신
+	Cont->get_blackboard()->SetValueAsBool(bb_keys::can_see_player,true);
+	Cont->get_blackboard()->SetValueAsVector(bb_keys::target_location,Player_Location);
+
+	
 }
 
 void ADoubleHitEnemy::Death()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("DoubleHitEnemy_Die!"));
+	UE_LOG(LogTemp, Warning, TEXT("DoubleHitEnemy_Die!"));
+	FTimerHandle WaitHandle;
+	float WaitTime = 2.5f;
+	IsDead = true;
+	GetWorld()->GetTimerManager().SetTimer(WaitHandle,FTimerDelegate::CreateLambda([&]
+	{
+		//delay
+		Destroy();
+	}), WaitTime,false);
 }
 

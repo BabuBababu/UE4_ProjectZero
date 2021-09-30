@@ -64,7 +64,7 @@ public:
 	ADoubleHitEnemy* EnemyCharacter;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float CyrrentHealth;
+	float CurrentHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MaxHealth;
 	UPROPERTY(EditAnyWhere, BlueprintReadWrite)
