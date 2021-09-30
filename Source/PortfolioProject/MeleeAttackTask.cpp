@@ -12,13 +12,16 @@
 
 UMeleeAttackTask::UMeleeAttackTask(FObjectInitializer const& object_initializer)
 {
-	NodeName = TEXT("MelleAttack");
+	NodeName = TEXT("MeleeAttack");
 }
 
 EBTNodeResult::Type UMeleeAttackTask::ExecuteTask(UBehaviorTreeComponent& owner_comp, uint8* NodeMemory)
 {
 	AMeleeEnemyAIController* const Cont = Cast<AMeleeEnemyAIController>(owner_comp.GetAIOwner());
 	ADoubleHitEnemy* const Enemy = Cast<ADoubleHitEnemy>(Cont->GetPawn());
+	Enemy->Attack = true;
+	
+	FinishLatentTask(owner_comp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;
 }
 

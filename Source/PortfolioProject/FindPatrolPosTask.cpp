@@ -46,7 +46,7 @@ EBTNodeResult::Type UFindPatrolPosTask::ExecuteTask(UBehaviorTreeComponent& Owne
 	if (NavSystem->GetRandomPointInNavigableRadius(Origin, search_radius, NextPatrol,nullptr))
 	{
 		Controller->get_blackboard()->SetValueAsVector(AMeleeEnemyAIController::TargetLocation, NextPatrol.Location);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("NextPosSuccess!"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("NextPosSuccess!"));
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s"),*NextPatrol.Location.ToString()));
