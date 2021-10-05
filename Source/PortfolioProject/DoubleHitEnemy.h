@@ -100,7 +100,6 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	TSubclassOf<class UAnimInstance> ParasiteAnimInstance;
 	
-	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UUserWidget> EnemyWidgetClass;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
