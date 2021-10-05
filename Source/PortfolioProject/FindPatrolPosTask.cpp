@@ -5,9 +5,11 @@
 #include "MeleeEnemyAIController.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "DoubleHitEnemy.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BlackBoardKeys.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 
 UFindPatrolPosTask::UFindPatrolPosTask(FObjectInitializer const& object_initializer)
@@ -18,12 +20,16 @@ UFindPatrolPosTask::UFindPatrolPosTask(FObjectInitializer const& object_initiali
 
 
 
-EBTNodeResult::Type UFindPatrolPosTask::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+	EBTNodeResult::Type UFindPatrolPosTask::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	
 	auto Controller = Cast<AMeleeEnemyAIController>(OwnerComp.GetAIOwner());
-	auto Enemy = Controller->GetPawn();
+	ADoubleHitEnemy* const Enemy = Cast<ADoubleHitEnemy>(Controller->GetPawn());
 
+	if(Enemy->IsDead)
+	{
+		return EBTNodeResult::Failed;
+	}
 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("success!"));
 	//
 	if (nullptr == Enemy) {
@@ -37,10 +43,10 @@ EBTNodeResult::Type UFindPatrolPosTask::ExecuteTask(UBehaviorTreeComponent& Owne
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No Enemy in Navi"));
 		return EBTNodeResult::Failed;
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("2success!"));
-	//
+	
 	FVector const Origin = Enemy->GetActorLocation();
 	FNavLocation NextPatrol;
+	Enemy->GetCharacterMovement()->MaxWalkSpeed = 300.f;
 
 	//NextPatrol변수에 임의의 location 데이터를 넣고 다시 TargetLocation키의 value에 값을 넣어준다.
 	if (NavSystem->GetRandomPointInNavigableRadius(Origin, search_radius, NextPatrol,nullptr))

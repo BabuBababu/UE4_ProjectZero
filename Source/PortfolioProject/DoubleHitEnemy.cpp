@@ -71,6 +71,8 @@ ADoubleHitEnemy::ADoubleHitEnemy()
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 	
 	//UE_LOG(LogTemp, Warning, TEXT("InitRandomName: %s"),*RandomName.ToString());
+	GetCharacterMovement()->MaxWalkSpeed= 300.f;
+	GetCharacterMovement()->MaxWalkSpeedCrouched= 200.f;
 
 }
 
@@ -166,6 +168,7 @@ void ADoubleHitEnemy::MyReceiveDamage(float damage, FName boneName, AActor* Dama
 	ACharacter* const Player = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
 	auto* const Cont = Cast<AMeleeEnemyAIController>(GetController());
 	FVector const Player_Location = Player->GetActorLocation();
+	
 	
 	if (boneName == TEXT("Head")|| boneName == TEXT("Spine2"))
 	{

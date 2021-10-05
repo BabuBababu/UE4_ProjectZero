@@ -5,6 +5,7 @@
 #include "MeleeEnemyAIController.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BehaviorTree.h"
+#include "DoubleHitEnemy.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
 #include "BlackBoardKeys.h"
 #include "PortfolioProjectCharacter.h"
@@ -23,23 +24,32 @@ EBTNodeResult::Type UFindPlayerLocationTask::ExecuteTask(UBehaviorTreeComponent&
 
 	ACharacter* const Player = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
 	auto const Cont = Cast<AMeleeEnemyAIController>(OwnerComp.GetAIOwner());
+	ADoubleHitEnemy* const Enemy = Cast<ADoubleHitEnemy>(Cont->GetPawn());
+	
 
 	FVector const Player_Location = Player->GetActorLocation();
-	if(search_random)
+	if(!Enemy->IsDead)
 	{
-		FNavLocation loc;
-		//플레이어 근처의 임의의 지점으로 이동한다.
-		UNavigationSystemV1* const nav_sys = UNavigationSystemV1::GetCurrent(GetWorld());
-		if(nav_sys->GetRandomPointInNavigableRadius(Player_Location,search_radius,loc,nullptr))
+		if(search_random)
 		{
-			Cont->get_blackboard()->SetValueAsVector(bb_keys::target_location,loc.Location);
-		}
+			FNavLocation loc;
+			//플레이어 근처의 임의의 지점으로 이동한다.
+			UNavigationSystemV1* const nav_sys = UNavigationSystemV1::GetCurrent(GetWorld());
+			if(nav_sys->GetRandomPointInNavigableRadius(Player_Location,search_radius,loc,nullptr))
+			{
+				Cont->get_blackboard()->SetValueAsVector(bb_keys::target_location,loc.Location);
+			}
 
 		
+		}
+		else
+		{
+			Cont->get_blackboard()->SetValueAsVector(bb_keys::target_location,Player_Location);
+		}
 	}
 	else
 	{
-		Cont->get_blackboard()->SetValueAsVector(bb_keys::target_location,Player_Location);
+		return EBTNodeResult::Failed;
 	}
 
 	FinishLatentTask(OwnerComp,EBTNodeResult::Succeeded);

@@ -19,7 +19,14 @@ EBTNodeResult::Type UMeleeAttackTask::ExecuteTask(UBehaviorTreeComponent& owner_
 {
 	AMeleeEnemyAIController* const Cont = Cast<AMeleeEnemyAIController>(owner_comp.GetAIOwner());
 	ADoubleHitEnemy* const Enemy = Cast<ADoubleHitEnemy>(Cont->GetPawn());
-	Enemy->Attack = true;
+	if(!Enemy->IsDead)
+	{
+		Enemy->Attack = true;
+	}
+	else
+	{
+		return EBTNodeResult::Failed;
+	}
 	
 	FinishLatentTask(owner_comp, EBTNodeResult::Succeeded);
 	return EBTNodeResult::Succeeded;

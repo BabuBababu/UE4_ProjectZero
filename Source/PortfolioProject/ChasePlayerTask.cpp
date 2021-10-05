@@ -4,8 +4,10 @@
 #include "ChasePlayerTask.h"
 #include "MeleeEnemyAIController.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "DoubleHitEnemy.h"
 #include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "BlackBoardKeys.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UChasePlayerTask::UChasePlayerTask(FObjectInitializer const& object_initializer)
 {
@@ -17,9 +19,19 @@ EBTNodeResult::Type UChasePlayerTask::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	//TargetLocation값을 AI컨트롤러의 BB에서 가져와서 PlayerLocation에 저장한다.
 	AMeleeEnemyAIController* const Cont = Cast<AMeleeEnemyAIController>(OwnerComp.GetAIOwner());
 	FVector const PlayerLocation = Cont->get_blackboard()->GetValueAsVector(bb_keys::target_location);
+	ADoubleHitEnemy* const Enemy = Cast<ADoubleHitEnemy>(Cont->GetPawn());
+	
 
 	// 플레이어의 위치로 이동한다.
-	UAIBlueprintHelperLibrary::SimpleMoveToLocation(Cont,PlayerLocation);
+	if(!Enemy->IsDead)
+	{
+		Enemy->GetCharacterMovement()->MaxWalkSpeed = 600.f;
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(Cont,PlayerLocation);
+	}
+	else
+	{
+		return EBTNodeResult::Failed;
+	}
 
 	//성공
 	FinishLatentTask(OwnerComp,EBTNodeResult::Succeeded);
