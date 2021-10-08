@@ -262,6 +262,7 @@ void APortfolioProjectCharacter::Tick(float DeltaSeconds)
 	if(ReloadNow==true && !AnimInstance->Montage_IsPlaying(ReloadingMontage))
 	{
 		ReloadNow = false;
+		GetMovementComponent()->MovementState.bCanJump = true;
 	}
 }
 
@@ -293,6 +294,13 @@ void APortfolioProjectCharacter::UpdateHealth()
 	 }
 }
 
+void APortfolioProjectCharacter::TakenDamaged(float damage)
+{
+	CurrentHP = CurrentHP - damage;
+	UpdateHealth();
+	GEngine->AddOnScreenDebugMessage(-1,200,FColor::Green,FString::Printf(TEXT("%f"),this->CurrentHP));
+}
+
 void APortfolioProjectCharacter::EquipRifle()
 {
 	//UCharacterMovementComponent *MovementPtr =  Cast<UCharacterMovementComponent>(this->GetCharacterMovement());
@@ -300,6 +308,7 @@ void APortfolioProjectCharacter::EquipRifle()
 	{
 		if(!ReloadNow&& !Aiming)
 			{
+				
 				RifleEquipped = false;
 				GetCharacterMovement()->MaxWalkSpeed= 300.f;
 				GetCharacterMovement()->MaxWalkSpeedCrouched= 100.f;
@@ -375,7 +384,6 @@ void APortfolioProjectCharacter::Fire()
 		{
 			if(!AnimInstance->Montage_IsPlaying(ReloadingMontage))
 			{
-				
 				AnimInstance->Montage_Play(FireMontage);
 				CurrentAmmo = CurrentAmmo-1;
 				if(Aiming)
@@ -411,6 +419,7 @@ void APortfolioProjectCharacter::Reloading()
 	if(CurrentAmmo<15)
 	{
 		ReloadNow = true;
+		GetMovementComponent()->MovementState.bCanJump = false;
 		AnimInstance->Montage_Play(ReloadingMontage);
 		
 		UGameplayStatics::PlaySoundAtLocation(this,ReloadingSound,GetActorLocation());
@@ -418,6 +427,7 @@ void APortfolioProjectCharacter::Reloading()
 		CurrentAmmo = ReloadingAmmo + CurrentAmmo;
 		SaveAmmo = SaveAmmo - ReloadingAmmo;
 	}
+	
 	
 }
 
@@ -502,6 +512,12 @@ void APortfolioProjectCharacter::FallBack()
 
 void APortfolioProjectCharacter::ESCMenu()
 {
+}
+
+void APortfolioProjectCharacter::Death()
+{
+	IsDead = true;
+	GetMovementComponent()->MovementState.bCanJump = false;
 }
 
 void APortfolioProjectCharacter::SetSkill1Time()

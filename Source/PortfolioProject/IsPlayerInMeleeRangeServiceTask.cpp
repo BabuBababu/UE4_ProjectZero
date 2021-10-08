@@ -24,13 +24,13 @@ void UIsPlayerInMeleeRangeServiceTask::OnBecomeRelevant(UBehaviorTreeComponent& 
 	ADoubleHitEnemy* const Enemy = Cast<ADoubleHitEnemy>(Cont->GetPawn());
 
 	ACharacter* const Player = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%f"),Enemy->GetDistanceTo(Player)));
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%f"),Enemy->GetDistanceTo(Player)));
 	
 
 	Cont->get_blackboard()->SetValueAsBool(bb_keys::player_is_in_melee_range,Enemy->GetDistanceTo(Player) <= MeleeRange);
 
 	if(bb_keys::player_is_in_melee_range)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("range is true!"));
+		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("range is true!"));
 	}
 }

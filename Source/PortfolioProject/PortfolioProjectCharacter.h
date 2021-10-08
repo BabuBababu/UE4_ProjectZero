@@ -78,6 +78,7 @@ protected:
 	void WaitHere();
 	void FallBack();
 	void ESCMenu();
+	void Death();
 
 	void SetSkill1Time();
 	void SetSkill4Time();
@@ -86,6 +87,8 @@ protected:
 public:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	void TakenDamaged(float damage);
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float MoveForward;

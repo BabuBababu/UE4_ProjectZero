@@ -13,6 +13,7 @@
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "math.h"
 #include "MeleeEnemyAIController.h"
+#include "PortfolioProjectCharacter.h"
 #include "Components/WidgetComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "UObject/ConstructorHelpers.h"
@@ -31,7 +32,6 @@ ADoubleHitEnemy::ADoubleHitEnemy()
 	LHand = CreateDefaultSubobject<USphereComponent>(TEXT("LHand"));
 	RHand = CreateDefaultSubobject<USphereComponent>(TEXT("RHand"));
 	
-	
 	//DataTable 초기화
 	static ConstructorHelpers::FObjectFinder<UDataTable> DoubleHitEnemyDataObject(TEXT("/Game/Movable/DataTable/DoubleHitEnemyDataTable"));
 	if(DoubleHitEnemyDataObject.Succeeded())
@@ -39,14 +39,18 @@ ADoubleHitEnemy::ADoubleHitEnemy()
 		UE_LOG(LogTemp, Warning, TEXT("DataTable Succeed!"));
 		EnemyDataTable = DoubleHitEnemyDataObject.Object;
 	}
-
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> SkeletalMeshObj (TEXT("/Game/Movable/ZombieAsset/Hulk/Hulk"));
+	SMesh = SkeletalMeshObj.Object;
 	SkeletalMesh->SetSkeletalMesh(SMesh); //팔 붙이기 위해 임시로 아무거나 넣어두기
+	
+	
 	EnemyWidget->SetupAttachment(RootComponent);
 	SkeletalMesh->SetupAttachment(RootComponent);
 	LHand->SetupAttachment(SkeletalMesh,TEXT("LeftHand"));
 	RHand->SetupAttachment(SkeletalMesh,TEXT("RightHand"));
 
-	
+	LHand->OnComponentBeginOverlap.AddDynamic(this, &ADoubleHitEnemy::OnOverlapBegin);
+	RHand->OnComponentBeginOverlap.AddDynamic(this, &ADoubleHitEnemy::OnOverlapBegin);
 	
 	//애님인스턴스 전부 선언
 	//static ConstructorHelpers::FClassFinder<UAnimInstance> AnimObj((TEXT("%s"),*AnimName));
@@ -96,6 +100,9 @@ void ADoubleHitEnemy::BeginPlay()
 	SkeletalMesh->SetRelativeRotation(EnemyRotation);
 	SkeletalMesh->SetRelativeScale3D(EnemyScale);
 	GetCapsuleComponent()->InitCapsuleSize(BodyX, BodyY);
+	
+	
+
 	LHand->InitSphereRadius(HandRdius);
 	LHand->SetRelativeLocation(LHandFLocation);
 	RHand->InitSphereRadius(HandRdius);
@@ -132,7 +139,8 @@ void ADoubleHitEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	//GEngine->AddOnScreenDebugMessage(-1,200,FColor::Green,FString::Printf(TEXT("%s"),CurrentHealth));
-
+	
+	DrawDebugComponents();
 }
 
  void ADoubleHitEnemy::SetEnemy(FName EnemyName)
@@ -186,6 +194,11 @@ void ADoubleHitEnemy::MyReceiveDamage(float damage, FName boneName, AActor* Dama
 	
 }
 
+void ADoubleHitEnemy::SendDamageToPlayer()
+{
+		
+}
+
 void ADoubleHitEnemy::Death()
 {
 	UE_LOG(LogTemp, Warning, TEXT("DoubleHitEnemy_Die!"));
@@ -197,5 +210,21 @@ void ADoubleHitEnemy::Death()
 		//delay
 		Destroy();
 	}), WaitTime,false);
+}
+
+void ADoubleHitEnemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	//auto Player = Cast<APortfolioProjectCharacter>(GetWorld()->GetFirstPlayerController());
+
+	
+	if (APortfolioProjectCharacter* const Player = Cast<APortfolioProjectCharacter>(OtherActor)) 
+	{	//플레이어에게 대미지를 줄때.
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Overlap Begin!!"));
+		if(SendDamage)
+		{
+			Player->TakenDamaged(Damage);
+		}
+	}
 }
 

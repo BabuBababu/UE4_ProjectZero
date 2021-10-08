@@ -6,6 +6,7 @@
 #include "MeleeEnemyAIController.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
+#include "PortfolioProjectCharacter.h"
 #include "Engine/DataTable.h"
 #include "Animation/AnimInstance.h"
 #include "Components/WidgetComponent.h"
@@ -54,6 +55,7 @@ public:
 
 	void SetEnemy(FName EnemyName);
 	void MyReceiveDamage(float damage, FName boneName, AActor* DamageCauser);
+	void SendDamageToPlayer();
 	void Death();
 	//데이터 테이블 행
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -113,5 +115,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Attack;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool SendDamage = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool PlayerFound;
+
+	UFUNCTION()
+	void OnOverlapBegin(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	
 };
