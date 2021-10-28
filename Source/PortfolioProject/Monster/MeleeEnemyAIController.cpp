@@ -2,7 +2,7 @@
 
 
 #include "MeleeEnemyAIController.h"
-#include "DoubleHitEnemy.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Monster/DoubleHitEnemy.h"
 #include "UObject/ConstructorHelpers.h"
 #include "BehaviorTree/BehaviorTree.h"
 #include "BehaviorTree/BehaviorTreeComponent.h"
@@ -10,11 +10,11 @@
 #include "Perception/AISenseConfig_Sight.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AIPerceptionComponent.h"
-#include "BlackBoardKeys.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/AI/BlackBoardKeys.h"
 #include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 #include "Runtime/Engine/Classes/Engine/World.h"
 #include "EngineGlobals.h"
-#include "PortfolioProjectCharacter.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Player/PortfolioProjectCharacter.h"
 
 
 const FName AMeleeEnemyAIController::HomePosKey(TEXT("HomePos"));

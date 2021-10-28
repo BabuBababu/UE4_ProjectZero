@@ -2,13 +2,13 @@
 
 
 #include "FindPlayerLocationTask.h"
-#include "MeleeEnemyAIController.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Monster/MeleeEnemyAIController.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BehaviorTree.h"
-#include "DoubleHitEnemy.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Monster/DoubleHitEnemy.h"
 #include "BehaviorTree/Blackboard/BlackboardKeyType_Vector.h"
-#include "BlackBoardKeys.h"
-#include "PortfolioProjectCharacter.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/AI/BlackBoardKeys.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Player/PortfolioProjectCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 

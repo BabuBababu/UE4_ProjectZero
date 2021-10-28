@@ -2,7 +2,7 @@
 
 
 #include "PlayerUIWidget.h"
-#include "PortfolioProjectCharacter.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Player/PortfolioProjectCharacter.h"
 
 void UPlayerUIWidget::NativeConstruct()
 {

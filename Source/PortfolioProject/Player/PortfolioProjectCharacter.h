@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Components/WidgetComponent.h"
-#include "PlayerUIWidget.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/UI/PlayerUIWidget.h"
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
-#include "MyLineTrace.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Player/MyLineTrace.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
 #include "PortfolioProjectCharacter.generated.h"

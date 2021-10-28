@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "MeleeEnemyAIController.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Monster/MeleeEnemyAIController.h"
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
-#include "PortfolioProjectCharacter.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Player/PortfolioProjectCharacter.h"
 #include "Engine/DataTable.h"
 #include "Animation/AnimInstance.h"
 #include "Components/WidgetComponent.h"

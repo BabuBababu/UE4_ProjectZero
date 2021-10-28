@@ -5,9 +5,9 @@
 
 #include <d3d10.h>
 
-#include "PortfolioProjectCharacter.h"
-#include "DoubleHitEnemy.h"
-#include "OneHitEnemy.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Player/PortfolioProjectCharacter.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Monster/DoubleHitEnemy.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/Monster/OneHitEnemy.h"
 #include "Engine/Engine.h"
 #include "particles/ParticleSystem.h"
 #include "DrawDebugHelpers.h"

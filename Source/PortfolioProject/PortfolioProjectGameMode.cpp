@@ -2,7 +2,7 @@
 
 #include "PortfolioProjectGameMode.h"
 #include "Blueprint/UserWidget.h"
-#include "PortfolioProjectCharacter.h"
+#include "Player/PortfolioProjectCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 APortfolioProjectGameMode::APortfolioProjectGameMode()
