@@ -48,8 +48,6 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	OrderWidget= CreateDefaultSubobject<UWidgetComponent>(TEXT("OrderWidget"));
 
 	PlayerSkeletalMesh->SetupAttachment(RootComponent);
-	//WeaponBack->AttachToComponent(PlayerSkeletalMesh,FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("WeaponBack"));
-	//WeaponRight->AttachToComponent(PlayerSkeletalMesh,FAttachmentTransformRules(EAttachmentRule::KeepRelative, true), TEXT("WeaponRight"));
 	WeaponBack->SetupAttachment(PlayerSkeletalMesh,TEXT("WeaponBack"));
 	WeaponRight->SetupAttachment(PlayerSkeletalMesh,TEXT("WeaponRight"));
 	SpringArm->SetupAttachment(RootComponent);
@@ -88,9 +86,7 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 	EscMenuWidgetClass = EscMenuAdd.Class;
 	static ConstructorHelpers::FClassFinder<UUserWidget> HurtAdd(TEXT("/Game/Movable/Charactor/HUD/BP_Widget_Hurt"));
 	HurtWidgetClass = HurtAdd.Class;
-	//static ConstructorHelpers::FClassFinder<UUserWidget> HUD_Player_UIAdd(TEXT("/Game/Movable/Charactor/HUD/BP_Widget_Player_UI"));
-	//HUD_Player_UIWidgetClass = HUD_Player_UIAdd.Class;
-	
+		
 	static ConstructorHelpers::FClassFinder<UUserWidget> G36CAdd(TEXT("/Game/Movable/Charactor/HUD/BP_Widget_G36C"));
 	G36CWidgetClass = G36CAdd.Class;
 	static ConstructorHelpers::FClassFinder<UUserWidget> RO635Add(TEXT("/Game/Movable/Charactor/HUD/BP_Widget_RO635"));
@@ -194,12 +190,6 @@ void APortfolioProjectCharacter::BeginPlay()
 		HurtUI = CreateWidget<UUserWidget>(PlayerController,HurtWidgetClass);
 		UE_LOG(LogTemp, Warning, TEXT("sucess Hurtwiget"));
 	}
-	// if(HUD_Player_UIWidgetClass != nullptr)
-	// {
-	// 	HUD_Player_UI = CreateWidget<UUserWidget>(PlayerController,HUD_Player_UIWidgetClass);
-	// 	UE_LOG(LogTemp, Warning, TEXT("sucess HudUIwiget"));
-	// }
-	
 	
 	if(G36CWidgetClass != nullptr)
 	{
