@@ -1,11 +1,13 @@
 # UE4_ProjectZero
 ## 소개
-TPS장르 미소녀 슈팅게임입니다.
+TPS 데모 미소녀 슈팅게임입니다.
 
-언리얼엔진4와 C++을 사용하여 제작하고 있습니다.
+* 엔진 : Unreal Engine 4.26.2
+* IDE :  Visual Studio Community 2019 Version 16.8.3
+* 인원 구성 : 1인 개발
 
-## 코드 목록
-![Code](./img/CodeList.png)
+## 개발 영상
+[![PlayMedia](http://img.youtube.com/vi/Jvbn7Z9DrY4/0.jpg)](https://youtu.be/Jvbn7Z9DrY4?t=0s) 
 
 
 * * *
