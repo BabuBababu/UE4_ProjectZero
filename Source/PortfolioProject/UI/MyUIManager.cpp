@@ -25,7 +25,6 @@ void UMyUIManager::AddUI()
 	{
 		createdWidget = CreateWidget<UUserWidget>(PlayerController, UITClassArray[i]);
 		// 위젯 배열에 저장
-		createdWidget->AddToViewport();
 		UIArray.Add(createdWidget);
 	}
 }

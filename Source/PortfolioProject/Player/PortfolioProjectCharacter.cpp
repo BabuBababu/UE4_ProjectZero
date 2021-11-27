@@ -182,11 +182,11 @@ void APortfolioProjectCharacter::BeginPlay()
 		PlayerUIManager->SetContoller(PlayerController);
 		UE_LOG(LogTemp, Warning, TEXT("sucess PlayerUIManager"));
 	}
-	 PlayerUIManager->UITClassArray.Add(MissionFailWidgetClass);
-	 PlayerUIManager->UITClassArray.Add(EscMenuWidgetClass);
 	 PlayerUIManager->UITClassArray.Add(G36CWidgetClass);
 	 PlayerUIManager->UITClassArray.Add(RO635WidgetClass);
 	 PlayerUIManager->UITClassArray.Add(CommanderWidgetClass);
+	 PlayerUIManager->UITClassArray.Add(MissionFailWidgetClass);
+	 PlayerUIManager->UITClassArray.Add(EscMenuWidgetClass);
 	PlayerUIManager->AddUI();
 	
 	 //위젯 생성
@@ -228,7 +228,7 @@ void APortfolioProjectCharacter::BeginPlay()
 	 // 	UE_LOG(LogTemp, Warning, TEXT("sucess commanderwiget"));
 	 // }
 	 //
-	//PlayerUIManager->AllAddToViewPort();
+	PlayerUIManager->AllAddToViewPort();
 	
 	 // EscMenuUI->AddToViewport();
 	 // MissionFailUI->AddToViewport(10);
