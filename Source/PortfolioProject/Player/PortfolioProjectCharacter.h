@@ -8,6 +8,7 @@
 #include "Components/TimelineComponent.h"
 #include "GameFramework/Character.h"
 #include "/UE4_Project_Zero/Source/PortfolioProject/Player/MyLineTrace.h"
+#include "/UE4_Project_Zero/Source/PortfolioProject/UI/MyUIManager.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
 #include "PortfolioProjectCharacter.generated.h"
@@ -184,6 +185,10 @@ public:
 	USoundBase* Skill1Sound;
 
 public:
+	//플레이어 UI매니저
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMyUIManager* PlayerUIManager;
+	
 	//플레이어 위젯클래스
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TSubclassOf<class UUserWidget> CrossHairWidgetClass;
