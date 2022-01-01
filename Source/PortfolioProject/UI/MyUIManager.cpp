@@ -3,30 +3,31 @@
 
 #include "MyUIManager.h"
 #include "/UE4_Project_Zero/Source/PortfolioProject/Player/PortfolioProjectCharacter.h"
-#include "Kismet/GameplayStatics.h"
+#include "Runtime/Engine/Classes/Kismet/GameplayStatics.h"
 
 
 void UMyUIManager::NativeConstruct()
 {
 	Super::NativeConstruct();
-	Init();
-
 }
 void UMyUIManager::Init()
 {
 	UIArray.Empty();
 	UITClassArray.Empty();
+	
+	
+	// APortfolioProjectCharacter* const Player = Cast<APortfolioProjectCharacter>(UGameplayStatics::GetPlayerController(GetWorld(),0));
+	
+	
 }
 
 void UMyUIManager::AddUI()
 {
-	
-	for (int i = 0 ; i < UITClassArray.Num(); ++i)
-	{
-		createdWidget = CreateWidget<UUserWidget>(PlayerController, UITClassArray[i]);
-		// 위젯 배열에 저장
-		UIArray.Add(createdWidget);
-	}
+	UIArray.Add(EscMenuUI);
+	UIArray.Add(MissionFailUI);
+	UIArray.Add(G36CUI);
+	UIArray.Add(RO635UI);
+	UIArray.Add(CommanderUI);
 }
 
 void UMyUIManager::DelUI(UUserWidget* name)
@@ -75,8 +76,31 @@ void UMyUIManager::NameByRemoveFromParent(UUserWidget* name)
 	}
 }
 
+void UMyUIManager::NameBySetVisibility(UUserWidget* Name, ESlateVisibility type)
+{
+	for (UUserWidget* widget : UIArray)
+	{
+		if(widget == Name)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("sucess Read widget!"));
+			if(ESlateVisibility::Hidden == type)
+			{
+				widget->SetVisibility(ESlateVisibility::Hidden);
+				UE_LOG(LogTemp, Warning, TEXT("sucess Hidden!"));
+			}
+			else if(ESlateVisibility::Visible == type)
+			{
+				widget->SetVisibility(ESlateVisibility::Visible);
+				UE_LOG(LogTemp, Warning, TEXT("sucess Visible!"));
+			}
+		}
+	}
+}
+
 
 void UMyUIManager::SetContoller(APlayerController* playercon)
 {
 	PlayerController = playercon;
 }
+
+

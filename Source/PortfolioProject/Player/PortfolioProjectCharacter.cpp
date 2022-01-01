@@ -79,24 +79,24 @@ APortfolioProjectCharacter::APortfolioProjectCharacter()
 		(GetCharacterMovement());
 
 	
-
-	static ConstructorHelpers::FClassFinder<UUserWidget> MissionFailAdd(TEXT("/Game/Movable/GameAsset/BP_MissionFailWidget"));
-	MissionFailWidgetClass = MissionFailAdd.Class;
-	
 	
 	static ConstructorHelpers::FClassFinder<UUserWidget> CrossHairAdd(TEXT("/Game/Movable/Charactor/HUD/BP_Widget_Crosshair"));
 	CrossHairWidgetClass = CrossHairAdd.Class;
-	static ConstructorHelpers::FClassFinder<UUserWidget> EscMenuAdd(TEXT("/Game/Movable/GameAsset/BP_ESC_Widget"));
-	EscMenuWidgetClass = EscMenuAdd.Class;
 	static ConstructorHelpers::FClassFinder<UUserWidget> HurtAdd(TEXT("/Game/Movable/Charactor/HUD/BP_Widget_Hurt"));
 	HurtWidgetClass = HurtAdd.Class;
-		
+	
+	static ConstructorHelpers::FClassFinder<UUserWidget> MissionFailAdd(TEXT("/Game/Movable/GameAsset/BP_MissionFailWidget"));
+	MissionFailWidgetClass = MissionFailAdd.Class;
+	static ConstructorHelpers::FClassFinder<UUserWidget> EscMenuAdd(TEXT("/Game/Movable/GameAsset/BP_ESC_Widget"));
+	EscMenuWidgetClass = EscMenuAdd.Class;
 	static ConstructorHelpers::FClassFinder<UUserWidget> G36CAdd(TEXT("/Game/Movable/Charactor/HUD/BP_Widget_G36C"));
 	G36CWidgetClass = G36CAdd.Class;
 	static ConstructorHelpers::FClassFinder<UUserWidget> RO635Add(TEXT("/Game/Movable/Charactor/HUD/BP_Widget_RO635"));
 	RO635WidgetClass = RO635Add.Class;
 	static ConstructorHelpers::FClassFinder<UUserWidget> CommanderAdd(TEXT("/Game/Movable/Charactor/HUD/BP_Widget_Commander"));
 	CommanderWidgetClass = CommanderAdd.Class;
+	
+	
 	
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> WA2000Gun(TEXT("/Game/Movable/WeaponAsset/WA2000Gun/WA2000_GUN.WA2000_GUN"));
 	WA2000Class = WA2000Gun.Object;
@@ -168,7 +168,7 @@ void APortfolioProjectCharacter::BeginPlay()
 	Super::BeginPlay();
 	APlayerController* const PlayerController = Cast<APlayerController>(GEngine->GetFirstLocalPlayerController(GetWorld()));
 	FString CurrentLevelName = GetWorld()->GetMapName();
-	
+	CurrentLevelName.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);
 	
 	CurrentHP = MaxHP;
 	Skill1Time = 0;
@@ -178,18 +178,43 @@ void APortfolioProjectCharacter::BeginPlay()
 	if(PlayerUIManager == nullptr)
 	{
 		PlayerUIManager=NewObject<UMyUIManager>();
-		PlayerUIManager->Init();
 		PlayerUIManager->SetContoller(PlayerController);
+		PlayerUIManager->Init();
 		UE_LOG(LogTemp, Warning, TEXT("sucess PlayerUIManager"));
 	}
-	 PlayerUIManager->UITClassArray.Add(G36CWidgetClass);
-	 PlayerUIManager->UITClassArray.Add(RO635WidgetClass);
-	 PlayerUIManager->UITClassArray.Add(CommanderWidgetClass);
-	 PlayerUIManager->UITClassArray.Add(MissionFailWidgetClass);
-	 PlayerUIManager->UITClassArray.Add(EscMenuWidgetClass);
-	PlayerUIManager->AddUI();
 	
-	 //위젯 생성
+	if(EscMenuWidgetClass != nullptr)
+	{
+		EscMenuUI = CreateWidget<UUserWidget>(PlayerController,EscMenuWidgetClass);
+		PlayerUIManager->EscMenuUI = EscMenuUI;
+		UE_LOG(LogTemp, Warning, TEXT("sucess escwiget"));
+	}
+	if(MissionFailWidgetClass != nullptr)
+	{
+		MissionFailUI = CreateWidget<UUserWidget>(PlayerController,MissionFailWidgetClass);
+		PlayerUIManager->MissionFailUI = MissionFailUI;
+		UE_LOG(LogTemp, Warning, TEXT("sucess missionfailwiget"));
+	}
+	
+	if(G36CWidgetClass != nullptr)
+	{
+		G36CUI = CreateWidget<UUserWidget>(PlayerController,G36CWidgetClass);
+		PlayerUIManager->G36CUI = G36CUI;
+		UE_LOG(LogTemp, Warning, TEXT("sucess G36Cwiget"));
+	}
+	if(RO635WidgetClass != nullptr)
+	{
+		RO635UI = CreateWidget<UUserWidget>(PlayerController,RO635WidgetClass);
+		PlayerUIManager->RO635UI = RO635UI;
+		UE_LOG(LogTemp, Warning, TEXT("sucess RO635wiget"));
+	}
+	if(CommanderWidgetClass != nullptr)
+	{
+		CommanderUI = CreateWidget<UUserWidget>(PlayerController,CommanderWidgetClass);
+		PlayerUIManager->CommanderUI = CommanderUI;
+		UE_LOG(LogTemp, Warning, TEXT("sucess commanderwiget"));
+	}
+
 	if(CrossHairWidgetClass != nullptr)
 	  	{
 	 	 CrossHairUI = CreateWidget<UUserWidget>(PlayerController,CrossHairWidgetClass);
@@ -201,45 +226,15 @@ void APortfolioProjectCharacter::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("sucess Hurtwiget"));
 	}
 	
-	 // if(EscMenuWidgetClass != nullptr)
-	 //  	{
-	 // 	 EscMenuUI = CreateWidget<UUserWidget>(PlayerController,EscMenuWidgetClass);
-	 //  	 UE_LOG(LogTemp, Warning, TEXT("sucess escwiget"));
-	 //  	}
-	 // if(MissionFailWidgetClass != nullptr)
-	 // 	{
-	 // 	   MissionFailUI = CreateWidget<UUserWidget>(PlayerController,MissionFailWidgetClass);
-	 //    	 UE_LOG(LogTemp, Warning, TEXT("sucess missionfailwiget"));
-	 // 	}
-	 //
-	 // if(G36CWidgetClass != nullptr)
-	 // {
-	 // 	G36CUI = CreateWidget<UUserWidget>(PlayerController,G36CWidgetClass);
-	 // 	UE_LOG(LogTemp, Warning, TEXT("sucess G36Cwiget"));
-	 // }
-	 // if(RO635WidgetClass != nullptr)
-	 // {
-	 // 	RO635UI = CreateWidget<UUserWidget>(PlayerController,RO635WidgetClass);
-	 // 	UE_LOG(LogTemp, Warning, TEXT("sucess RO635wiget"));
-	 // }
-	 // if(CommanderWidgetClass != nullptr)
-	 // {
-	 // 	CommanderUI = CreateWidget<UUserWidget>(PlayerController,CommanderWidgetClass);
-	 // 	UE_LOG(LogTemp, Warning, TEXT("sucess commanderwiget"));
-	 // }
-	 //
+	PlayerUIManager->AddUI();
 	PlayerUIManager->AllAddToViewPort();
 	
-	 // EscMenuUI->AddToViewport();
-	 // MissionFailUI->AddToViewport(10);
-	 // G36CUI->AddToViewport();
-	 // RO635UI->AddToViewport();
-	 // CommanderUI->AddToViewport();
+	PlayerUIManager->NameBySetVisibility(EscMenuUI,ESlateVisibility::Hidden);
+	PlayerUIManager->NameBySetVisibility(MissionFailUI,ESlateVisibility::Hidden);
+	
 
 	
 	HurtUI->AddToViewport();
-	//EscMenuUI->SetVisibility(ESlateVisibility::Hidden);
-	//MissionFailUI->SetVisibility(ESlateVisibility::Hidden);
 	HurtUI->SetVisibility(ESlateVisibility::Hidden);
 
 	HUDWidget->SetWidgetSpace(EWidgetSpace::Screen);
@@ -248,17 +243,19 @@ void APortfolioProjectCharacter::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(SkillTimer,this,&APortfolioProjectCharacter::SetSkill1Time,1.0f,true);
 	GetWorld()->GetTimerManager().SetTimer(SkillTimer4,this,&APortfolioProjectCharacter::SetSkill4Time,1.0f,true);
 
-	if (CurrentLevelName != "LobbyBase")
+	if (CurrentLevelName == "LobbyBase")
 	{
-		//G36CUI->SetVisibility(ESlateVisibility::Visible);
-		//RO635UI->SetVisibility(ESlateVisibility::Visible);
-		//CommanderUI->SetVisibility(ESlateVisibility::Visible);
+		UE_LOG(LogTemp, Warning, TEXT("current LobbyBase"));
+		PlayerUIManager->NameBySetVisibility(G36CUI,ESlateVisibility::Hidden);
+		PlayerUIManager->NameBySetVisibility(RO635UI,ESlateVisibility::Hidden);
+		PlayerUIManager->NameBySetVisibility(CommanderUI,ESlateVisibility::Hidden);
 	}
 	else
 	{
-		//G36CUI->SetVisibility(ESlateVisibility::Hidden);
-		//RO635UI->SetVisibility(ESlateVisibility::Hidden);
-		//CommanderUI->SetVisibility(ESlateVisibility::Hidden);
+		UE_LOG(LogTemp, Warning, TEXT("current not LobbyBase"));
+		PlayerUIManager->NameBySetVisibility(G36CUI,ESlateVisibility::Visible);
+		PlayerUIManager->NameBySetVisibility(RO635UI,ESlateVisibility::Visible);
+		PlayerUIManager->NameBySetVisibility(CommanderUI,ESlateVisibility::Visible);
 	}
 
 	if(LineTrace == nullptr)
