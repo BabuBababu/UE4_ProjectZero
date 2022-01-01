@@ -432,7 +432,6 @@ void APortfolioProjectCharacter::Reloading()
 		ReloadNow = true;
 		GetMovementComponent()->MovementState.bCanJump = false;
 		AnimInstance->Montage_Play(ReloadingMontage);
-		
 		UGameplayStatics::PlaySoundAtLocation(this,ReloadingSound,GetActorLocation());
 		ReloadingAmmo = 15-CurrentAmmo;
 		CurrentAmmo = ReloadingAmmo + CurrentAmmo;
